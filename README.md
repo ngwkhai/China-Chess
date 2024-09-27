@@ -1,3 +1,3 @@
 # China-Chess 
 Khai beo
-Sa beo
+Sa bel
