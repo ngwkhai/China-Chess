@@ -41,6 +41,6 @@ class Node(ABC):
     # Phương thức trừu tượng
     @abstractmethod
     def _create_node(self, game_state: GameState, parent, parent_move: tuple):
-        """This method returns a new node"""
+        """Phương thức này trả về một nút mới"""
         pass
 
