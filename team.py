@@ -1,5 +1,5 @@
 from enum import Enum
-"""The Enum classifies the teams"""
+"""Xác định các team trong game"""
 class Team(Enum):
     #Red team
     RED = 1
@@ -16,7 +16,7 @@ class Team(Enum):
 
     def __str__(self):
         return self.name.lower()
-    """Reverse function"""
+    """Đảo ngược team"""
     @staticmethod
     def get_reverse_team(team):
         if team is Team.RED:
