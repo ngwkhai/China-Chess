@@ -13,3 +13,10 @@ class Button():
             self.image = self.text
         self.rect = self.image.get_rect(center=(self.x_pos, self.y_pos))
         self.text_rect = self.text.get_rect(center=(self.x_pos, self.y_pos))
+    def draw(self, screen):
+        mouse_pos = pygame.mouse.get_pos()
+
+        self.change_color(mouse_pos)
+        if self.image is not None:
+            screen.blit(self.image, self.rect)
+        screen.blit(self.text, self.text_rect)
