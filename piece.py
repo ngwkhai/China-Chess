@@ -1,17 +1,17 @@
 from abc import ABC, abstractmethod
 from team import Team
 class Piece(ABC):
-    """Class representing a piece"""
-    # Constants for the piece
+    """Lớp đại diện cho một quân cờ"""
+    # Thuộc tính
 
     _piece_value = None
     _piece_type = None
 
-    # Board size
+    # Kích thước bàn cờ
     BOARD_SIZE_X = 10
     BOARD_SIZE_Y = 9
 
-    # Palace bound
+    # Kích thước cung điện
     BOUND_PALACE_X_RED = tuple((7, 9))
     BOUND_PALACE_X_BLACK = tuple((0, 2))
     BOUND_PALACE_Y = tuple((3, 5))
@@ -24,7 +24,7 @@ class Piece(ABC):
         number_of_pieces: int,
         nummber_of_team_pieces: int,
     ) -> None:
-        # Create properties
+        # Khởi tạo các thuộc tính
         self.position = position
         self.team = team
 
@@ -36,16 +36,16 @@ class Piece(ABC):
     def __str__(self) -> str:
         return str(self.team) + "_" + self._piece_type
 
-    # Properties initialization and getter/setter
+    # Khởi tạo thuộc tính và các phương thức getter và setter
 
     @property
     def position(self) -> tuple:
-        """Getter of the position property, return the position of the piece"""
+        # Trả về vị trí của quân cờ
         return self._position
 
     @position.setter
     def position(self, new_position: tuple) -> None:
-        """Setter of the position property, recieve a position as a tuple"""
+        # Kiểm tra vị trí mới có nằm trên bàn cờ không
         if self.is_position_on_board(new_position) is False:
             raise ValueError("The position is out of range")
 
@@ -53,8 +53,7 @@ class Piece(ABC):
 
     @property
     def admissible_moves(self) -> list:
-        """Getter of admissible_moves property,
-        return a list of admissible movement of a piece"""
+        # Trả về danh sách các nước đi hợp lệ của quân cờ
         if self._admissible_moves is None:
             self._admissible_moves = self.get_admissible_moves()
 
@@ -62,7 +61,7 @@ class Piece(ABC):
 
     # Instance method initialization
     def _get_piece_team_on_position(self, position: tuple) -> Team:
-        """Return the team of the piece on the position (Team.NONE, Team.RED, Team.BLACK)"""
+        # Trả về đội của quân cờ trên vị trí
         if self.is_position_on_board(position) is False:
             raise ValueError("The position is out of range")
 
@@ -73,49 +72,46 @@ class Piece(ABC):
             return Team[self.board[position[0]][position[1]][0]]
 
     def is_position_teammate(self, position: tuple) -> bool:
-        """Return True if the piece on the position is on the same team, vice versa"""
+        # Trả về True nếu quân cờ trên vị trí là đồng đội, ngược lại
         return self._get_piece_team_on_position(position) is self.team
 
     def is_position_free(self, position: tuple) -> bool:
-        """Return True if there is no piece on the position, vice versa"""
+        # Trả về True nếu vị trí không có quân cờ, ngược lại
         return self._get_piece_team_on_position(position) is Team.NONE
 
     def is_position_opponent(self, position: tuple) -> bool:
-        """Return True if the piece on the position is the opponent's piece, vice versa"""
+        # Trả về True nếu quân cờ trên vị trí là đối thủ, ngược lại
         return self._get_piece_team_on_position(position).value == -self.team.value
 
     def is_crossed_river(self) -> bool:
-        """Return True if the piece has crossed the river"""
+        # Trả về True nếu quân cờ đã vượt sông, ngược lại
         return abs(self.position[0] + 9 * (self.team.value - 1) / 2) < 5
 
     # Abstract method
     @abstractmethod
     def piece_value(self, value_pack=0) -> float:
-        """This method return the value of the piece"""
+        """Phương thức trừu tượng trả về giá trị của quân cờ"""
         pass
 
     @abstractmethod
     def get_admissible_moves(self) -> list:
-        """Abstract method that return the list of admissible moves of a piece.
-        This method is used to initialize the piece"""
+        """Phương thức trừu tượng trả về danh sách các nước đi hợp lệ của quân cờ"""
         pass
 
     # Static method
     @staticmethod
     def is_position_on_board(position: tuple) -> bool:
-        """Return True if the position is a valid position on the board, vice versa"""
-        # Check if the x component is on the board
+        """Trả về True nếu vị trí nằm trên bàn cờ, ngược lại"""
+        # Kiểm tra xem phần tử x có nằm trên bàn cờ không
         result_x = position[0] >= 0 and position[0] < Piece.BOARD_SIZE_X
-
-        # Check if the y component is on the board
+        # Kiểm tra xem phần tử y có nằm trên bàn cờ không
         result_y = position[1] >= 0 and position[1] < Piece.BOARD_SIZE_Y
-
         return result_x and result_y
 
     @staticmethod
     def is_position_in_palace(position: tuple) -> bool:
-        """Return True if the position is in the palace, vice versa"""
-        # Check if the x component is in the palace
+        """Trả về True nếu vị trí nằm trong cung điện, ngược lại"""
+        # Kiểm tra xem phần tử x có nằm trong cung điện không
         result_x = (
             position[0] >= Piece.BOUND_PALACE_X_BLACK[0]
             and position[0] <= Piece.BOUND_PALACE_X_BLACK[1]
@@ -123,13 +119,11 @@ class Piece(ABC):
             position[0] >= Piece.BOUND_PALACE_X_RED[0]
             and position[0] <= Piece.BOUND_PALACE_X_RED[1]
         )
-
-        # Check if the y component is on the board
+        # Kiểm tra xem phần tử y có nằm trong cung điện không
         result_y = (
             position[1] >= Piece.BOUND_PALACE_Y[0]
             and position[1] <= Piece.BOUND_PALACE_Y[1]
         )
-
         return result_x and result_y
 
     @staticmethod
@@ -140,8 +134,7 @@ class Piece(ABC):
         number_of_pieces: int,
         number_of_team_pieces: int,
     ):
-        """This method creates an instance of a piece
-        depending on the input notation and other additional arguments"""
+        """Phương thức tạo một thể hiện của quân cờ"""
         team = Team[notation[0]]
         piece_type = notation[1]
         match piece_type:
@@ -175,62 +168,61 @@ class Piece(ABC):
                 )
 
 class Advisor(Piece):
-    """Class representing the advisor piece"""
-
+    """Lớp đại diện cho quân sĩ"""
     _piece_value = 20
     _piece_type = "advisor"
 
     def piece_value(self, value_pack: int = 0) -> float:
-        # Default value pack
+        # Dữ liệu mặc định
         if value_pack == 0:
             return self._piece_value
 
-        # Value pack 1
+        # Dữ liệu gói 1
         elif value_pack == 1:
             change = 0
-            # If the advisor has no admissible moves, it receives a penalty of 10 points
+            # Nhận một khoản phạt 10 điểm nếu quân sĩ không có nước đi hợp lệ
             if len(self.admissible_moves) == 0:
                 change = -10
             return self._piece_value + change
 
-        # Value pack 2
+        # Dữ liệu gói 2
         elif value_pack == 2:
             change = 0
             x_orient = [1, 1, -1, -1]
             y_orient = [1, -1, -1, 1]
             for cnt in range(4):
-                # Possible position setting
+                # Vị trí mới
                 pos = (
                     self.position[0] + x_orient[cnt],
                     self.position[1] + y_orient[cnt],
                 )
 
-                # If the 2 advisors are connected, they receive a bonus of 5 points
+                # Kiểm tra xem vị trí mới có nằm trên bàn cờ không và có nằm trong cung điện không
                 if self.is_position_on_board(pos) and self.is_position_in_palace(pos):
                     if self.board[pos[0]][pos[1]][1] == "A":
                         change += 5
 
             return self._piece_value + change
 
-        # If the value pack is not found
+        # Nếu gói dữ liệu không tồn tại
         else:
             raise ValueError("Value pack is not found")
 
     def get_admissible_moves(self) -> list:
-        # Create a list of admissible moves for the advisor
+        # Tạo một danh sách các nước đi hợp lệ cho quân sĩ
         admissible_moves = []
 
-        # Possible goal positions
+        # Những hướng có thể của quân cờ
         x_orient = [1, 1, -1, -1]
         y_orient = [1, -1, -1, 1]
         maximum_move_count = 4
 
-        # Iterate through all positions
+        # Duyệt qua các hướng
         for cnt in range(maximum_move_count):
-            # New position
+            # Vị trí mới
             pos = (self.position[0] + x_orient[cnt], self.position[1] + y_orient[cnt])
 
-            # Chech whether the new position is legal
+            # Kiểm tra xem vị trí mới có nằm trên bàn cờ không và không có quân cờ đồng đội không
             if (
                 self.is_position_on_board(pos)
                 and not self.is_position_teammate(pos)
@@ -238,71 +230,69 @@ class Advisor(Piece):
             ):
                 admissible_moves.append(pos)
 
-        # Return the list of admissible moves
+        # Trả về danh sách các nước đi hợp lệ
         return admissible_moves
 
 class Cannon(Piece):
-    """Class representing the cannon piece"""
-
+    """Lớp đại diện cho quân pháo"""
     _piece_value = 45
     _piece_type = "cannon"
 
     def piece_value(self, value_pack: int = 0) -> float:
-        # Default value pack
+        # Dữ liệu mặc định
         if value_pack == 0:
             return self._piece_value
 
-        # Value pack 1
+        # Dữ liệu gói 1
         elif value_pack == 1:
             change = 0
-            # Receive a penalty of 10 points if the cannon has no admissible moves
+            # Nhận một khoản phạt 10 điểm nếu quân pháo không có nước đi hợp lệ
             if len(self.admissible_moves) == 0:
                 change = -10
             return self._piece_value + change
 
-        # Value pack 2
+        # Dữ liệu gói 2
         elif value_pack == 2:
             change = 0
-            # Receive a penalty of 10 points if the cannon has no admissible moves
+            # Nhận một khoản phạt hoặc thưởng 10 điểm nếu quân pháo không có nước đi hợp lệ
             if len(self.admissible_moves) == 0:
                 change += -10
-            # Receive a bonus or penalty based on the game phase
+            # Nhận một khoản thưởng dựa trên số quân cờ mà quân pháo có thể ăn
             change += (self.number_of_pieces - 16) * 0.75
-            # Avoid trading when losing
+            # Tránh trao đổi khi thua
             change += (16 - self.number_of_team_pieces) * 0.25
             return self._piece_value + change
 
-        # If the value pack is not found
+        # Nếu gói dữ liệu không tồn tại
         else:
             raise ValueError("Value pack is not found")
 
     def get_admissible_moves(self) -> list:
-        # Create a list of admissible moves for the cannon
+        # Tạo một danh sách các nước đi hợp lệ cho quân pháo
         admissible_moves = []
 
-        # Define possible direction of the piece
+        # Những hướng có thể của quân cờ
         x_direction = [1, -1, 0, 0]
         y_direction = [0, 0, 1, -1]
 
-        # Iterate through direction
+        # Duyệt qua các hướng
         for direction in range(4):
             piece_behind = 0
 
-            # Gradually increase the steps
+            # Dần dần tăng số bước
             for steps in range(1, 10):
-                # Calculate the new position
+                # Tính toán vị trí mới
                 new_position = (
                     self.position[0] + steps * x_direction[direction],
                     self.position[1] + steps * y_direction[direction],
                 )
 
-                # Check if the new position is on the board
+                # Kiểm tra xem vị trí mới có nằm trên bàn cờ không
                 if self.is_position_on_board(new_position):
-                    # Check if there is any piece on the new position
+                    # Kiểm tra xem có quân cờ nào ở vị trí mới không
                     if self.is_position_free(new_position) is False:
                         piece_behind += 1
-
-                        # If there is an enemy piece behind the piece in new position
+                        # Kiểm tra xem quân cờ ở vị trí mới có phải là đối thủ không
                         if piece_behind == 2 and self.is_position_opponent(
                             new_position
                         ):
@@ -315,8 +305,7 @@ class Cannon(Piece):
         return admissible_moves
 
 class Rook(Piece):
-    """Class representing the rook piece"""
-
+    """Lớp đại diện cho quân xe"""
     _piece_value = 90
     _piece_type = "rook"
 
@@ -332,63 +321,60 @@ class Rook(Piece):
         self._control_pos_count = 0
 
     def piece_value(self, value_pack: int = 0) -> float:
-        # Default value pack
+        # Dữ liệu mặc định
         if value_pack == 0:
             return self._piece_value
-
-        # Value pack 1
+        # Dữ liệu gói 1
         elif value_pack == 1:
             change = 0
-            # Receive a penalty of 10 points if the rook has no admissible moves
+            # Nhận một khoản phạt 10 điểm nếu quân xe không có nước đi hợp lệ
             if len(self.admissible_moves) == 0:
                 change = -10
             else:
-                # Receive a bonus based on the number of positions the rook controls
+                # Nhận một khoản thưởng dựa trên số vị trí mà quân xe kiểm soát
                 change = self._control_pos_count * 0.5
             return self._piece_value + change
-
-        # Value pack 2
+        # Dữ liệu gói 2
         elif value_pack == 2:
             change = 0
-            # Receive a penalty of 10 points if the rook has no admissible moves
+            # Nhận một khoản phạt 10 điểm nếu quân xe không có nước đi hợp lệ
             if len(self.admissible_moves) == 0:
                 change += -10
-            # Receive a bonus based on the number of positions the rook controls
+            # Nhận một khoản thưởng dựa trên số vị trí mà quân xe kiểm soát
             else:
                 change += self._control_pos_count * 0.5
-            # Avoid trading when losing
+            # Nhận một khoản thưởng dựa trên giai đoạn của trò chơi và xem quân xe đã vượt sông chưa
             change += (16 - self.number_of_team_pieces) * 0.25
-            # Receive a bonus based on the game phase and whether it has crossed the river
+            # Nhận một khoản thưởng dựa trên vị trí của quân xe
             change += (32 - self.number_of_pieces) * int(self.is_crossed_river())
             return self._piece_value + change
 
-        # If the value pack is not found
+        # Nếu gói dữ liệu không tồn tại
         else:
             raise ValueError("Value pack is not found")
 
     def get_admissible_moves(self) -> list:
-        # Create a list of admissible moves for the rook
+        # Tạo một danh sách các nước đi hợp lệ cho quân xe
         admissible_moves = []
 
-        # Define possible direction of the piece
+        # Những hướng có thể của quân cờ
         x_direction = [1, -1, 0, 0]
         y_direction = [0, 0, 1, -1]
 
-        # Iterate through direction
+        # Duyệt qua các hướng
         for direction in range(4):
-            # Gradually increase the steps
+            # Dần dần tăng số bước
             for steps in range(1, 10):
-                # Calculate the new position
+                # Tính toán vị trí mới
                 new_position = (
                     self.position[0] + steps * x_direction[direction],
                     self.position[1] + steps * y_direction[direction],
                 )
-
-                # Check if the new position is on the board
+                # Kiểm tra xem vị trí mới có nằm trên bàn cờ không
                 if self.is_position_on_board(new_position):
-                    # Check if there is any piece on the new position
+                    # Kiểm tra xem có quân cờ nào ở vị trí mới không
                     if self.is_position_free(new_position) is False:
-                        # Check if the piece on the new position is on the enemy team
+                        # Kiểm tra xem quân cờ ở vị trí mới có phải là đối thủ không
                         if self.is_position_opponent(new_position):
                             admissible_moves.append(new_position)
                         break
@@ -399,13 +385,13 @@ class Rook(Piece):
         return admissible_moves
 
 class Elephant(Piece):
-    """Class representing the elephant piece"""
+    """Lớp đại diện cho quân tượng"""
 
     _piece_value = 25
     _piece_type = "elephant"
 
     def _cross_river(self, position: tuple) -> bool:
-        """Return True if a piece has crossed the river, vice versa"""
+        # Trả về True nếu quân tượng đã vượt sông, ngược lại
         if self.team is Team.RED and position[0] < 5:
             return True
         if self.team is Team.BLACK and position[0] > 4:
@@ -413,26 +399,23 @@ class Elephant(Piece):
         return False
 
     def piece_value(self, value_pack: int = 0) -> float:
-        # Default value pack
+        # Gói dữ liệu mặc định
         if value_pack == 0:
             return self._piece_value
-
-        # Value pack 1
+        # Gói dữ liệu 1
         elif value_pack == 1:
             change = 0
-            # Receive a penalty of 10 points if the elephant has no admissible moves
+            # Nhận một khoản phạt 10 điểm nếu quân tượng không có nước đi hợp lệ
             if len(self.admissible_moves) == 0:
                 change = -10
             return self._piece_value + change
-
-        # Value pack 2
+        # Gói dữ liệu 2
         elif value_pack == 2:
             change = 0
-            # Possible goal positions
+            # Các hướng có thể
             x_direction = [2, 2, -2, -2]
             y_direction = [2, -2, 2, -2]
-
-            # Possible block positions
+            # Các vị trí chặn
             x_block = [1, 1, -1, -1]
             y_block = [1, -1, 1, -1]
 
@@ -445,37 +428,32 @@ class Elephant(Piece):
                     self.position[0] + x_block[direction],
                     self.position[1] + y_block[direction],
                 )
-
-                # Check if all the conditions below are met to add admissible moves for the elephant
+                # Kiểm tra xem tất cả các điều kiện dưới đây có được thỏa mã
                 if (
                     self.is_position_on_board(new_pos)
                     and self.is_position_free(block_pos)
                     and not self._cross_river(new_pos)
                 ):
-                    # Receive a bonus if the 2 elephants are connected
+                    # Kiểm tra xem quân cờ ở vị trí mới có phải là đối thủ không
                     if self.board[new_pos[0]][new_pos[1]][1] == "E":
                         change += 5
                         break
             return self._piece_value + change
-
-        # If the value pack is not found
+        # Nếu gói dữ liệu không tồn tại
         else:
             raise ValueError("Value pack is not found")
 
     def get_admissible_moves(self) -> list:
-        # Create a list of admissble moves for the elephant
+        # Tạo một danh sách các nước đi hợp lệ cho quân tượng
         admissible_moves = []
-
-        # Possible goal positions
+        # Các hướng có thể
         x_direction = [2, 2, -2, -2]
         y_direction = [2, -2, 2, -2]
         maximum_move_count = 4
-
-        # Possible block positions
+        # Các vị trí chặn
         x_block = [1, 1, -1, -1]
         y_block = [1, -1, 1, -1]
-
-        # Iterate through direction
+        # Duyệt qua các hướng
         for direction in range(maximum_move_count):
             new_pos = (
                 self.position[0] + x_direction[direction],
@@ -486,8 +464,7 @@ class Elephant(Piece):
                 self.position[0] + x_block[direction],
                 self.position[1] + y_block[direction],
             )
-
-            # Check if all the conditions below are met to add admissible moves for the elephant
+            # Kiểm tra xem tất cả các điều kiện dưới đây có được thỏa mã
             if (
                 self.is_position_on_board(new_pos)
                 and self.is_position_free(block_pos)
@@ -499,22 +476,20 @@ class Elephant(Piece):
         return admissible_moves
 
 class Pawn(Piece):
-    """Class representing the pawn piece"""
-
+    """Lớp đại diện cho quân tốt"""
     _piece_value = 10
     _piece_type = "pawn"
 
     def piece_value(self, value_pack=0) -> float:
-        # Default value pack
+        # Gói dữ liệu mặc định
         if value_pack == 0:
             if self.is_crossed_river() is True:
                 self._piece_value = 20
             return self._piece_value
-
-        # Value pack 1
+        # Gói dữ liệu 1
         elif value_pack == 1:
             change = 0
-            # Receive a bonus based on the position of the pawn
+            # Nhận một khoản thưởng dựa trên vị trí của quân tốt
             if self.team is Team.BLACK:
                 if self.position == (3, 4):
                     change = 20
@@ -537,10 +512,10 @@ class Pawn(Piece):
                         change = 10
             return self._piece_value + change
 
-        # Value pack 2
+        # Gói dữ liệu 2
         elif value_pack == 2:
             change = 0
-            # Receive a bonus based on the position of the pawn
+            # Nhận một khoản thưởng dựa trên vị trí của quân tốt
             if self.team is Team.BLACK:
                 if self.position == (3, 4):
                     change += 20 - (32 - self.number_of_pieces) * 2
@@ -565,20 +540,20 @@ class Pawn(Piece):
                         change += 0
                     else:
                         change += 10
-            # Receive a bonus based on the game phase
+            # Nhận một khoản thưởng dựa trên số quân cờ mà quân tốt có thể ăn
             change += (16 - self.number_of_team_pieces) * 2
             return self._piece_value + change
 
-        # If the value pack is not found
+        # Nếu gói dữ liệu không tồn tại
         else:
             raise ValueError("Value pack is not found")
 
     # Searching admissible moves for the pawn
     def get_admissible_moves(self) -> list:
-        # Create a list of admissible moves for the pawn
+        # Tạo một danh sách các nước đi hợp lệ cho quân tốt
         admissible_moves = []
 
-        # Check the new position
+        # Kiểm tra vị trí mới
         new_pos = (self.position[0] - self.team.value, self.position[1])
         if self.is_position_on_board(new_pos) and not self.is_position_teammate(new_pos):
             admissible_moves.append(new_pos)
@@ -595,20 +570,19 @@ class Pawn(Piece):
         return admissible_moves
 
 class Horse(Piece):
-    """Class representing the horse piece"""
-
+    """Lớp đại diện cho quân mã"""
     _piece_value = 40
     _piece_type = "horse"
 
     def piece_value(self, value_pack: int = 0) -> float:
-        # Default value pack
+        # Gói dữ liệu mặc định
         if value_pack == 0:
             return self._piece_value
 
-        # Value pack 1
+        # Gói dữ liệu 1
         elif value_pack == 1:
             change = 0
-            # Receive bonus or penalty based on the number of admissible moves it has
+            # Nhận một khoảng phạt hoặc thưởng dựa trên số nước đi hợp lệ mà quân mã có
             if len(self.admissible_moves) == 0 or len(self.admissible_moves) == 1:
                 change += -10
             elif len(self.admissible_moves) == 2:
@@ -623,10 +597,10 @@ class Horse(Piece):
                 change += -25
             return self._piece_value + change
 
-        # Value pack 2
+        # Gói dữ liệu 2
         elif value_pack == 2:
             change = 0
-            # Receive a bonus or penalty based on the number of admissible moves it has
+            # Nhận một khoản phạt hoặc thưởng dựa trên số nước đi hợp lệ mà quân mã có
             if len(self.admissible_moves) == 0 or len(self.admissible_moves) == 1:
                 change += -5
             elif len(self.admissible_moves) == 2:
@@ -636,7 +610,7 @@ class Horse(Piece):
             elif len(self.admissible_moves) == 7 or len(self.admissible_moves) == 8:
                 change += 5
 
-            # Receive a bonus or penalty base on the state of the game
+            # Nhận một khoản thưởng dựa trên số quân cờ mà quân mã có thể ăn
             change += (22 - self.number_of_pieces) * 0.75
 
             palace_pos = None
@@ -649,31 +623,31 @@ class Horse(Piece):
 
             return self._piece_value + change
 
-        # If the value pack is not found
+        # Nếu gói dữ liệu không tồn tại
         else:
             raise ValueError("Value pack is not found")
 
     def get_admissible_moves(self) -> list:
-        # Create a list of admissible moves for the horse
+        # Tạo một danh sách các nước đi hợp lệ cho quân mã
         admissible_moves = []
 
-        # Possible goal positions
+        # Các hướng đích đến
         x_orient = [2, 2, 1, -1, -2, -2, -1, 1]
         y_orient = [1, -1, -2, -2, -1, 1, 2, 2]
         maximum_move_count = 8
 
-        # Possible directions
+        # Các hướng của quân mã
         p_orient = [1, 0, -1, 0]
         q_orient = [0, -1, 0, 1]
 
         for cnt in range(maximum_move_count):
-            # Middle position
+            # Vị trí con mã bị chặn
             pos = (
                 self.position[0] + p_orient[cnt // 2],
                 self.position[1] + q_orient[cnt // 2],
             )
 
-            # Check if the horse is not block
+            # Kiểm tra xem con mã có bị chặn không
             if self.is_position_on_board(pos) and self.is_position_free(pos):
                 # Goal position
                 pos = (
@@ -681,28 +655,27 @@ class Horse(Piece):
                     self.position[1] + y_orient[cnt],
                 )
 
-                # Check the goal position
+                # Kiểm tra xem vị trí mới có nằm trên bàn cờ không
                 if self.is_position_on_board(pos) and not self.is_position_teammate(pos):
                     admissible_moves.append(pos)
 
         return admissible_moves
 
 class General(Piece):
-    """Class representing the general piece"""
-
+    """Lớp đại diện cho quân tướng"""
     _piece_value = 0
     _piece_type = "general"
 
     def piece_value(self, value_pack: int = 0) -> float:
-        # Default value pack
+        # Gói dữ liệu mặc định
         if value_pack == 0:
             return self._piece_value
 
-        # Value pack 1
+        # Gói dữ liệu 1
         elif value_pack == 1:
             return self._piece_value
 
-        # Value pack 2
+        # Gói dữ liệu 2
         elif value_pack == 2:
             opponent = Team.NONE
             if self.team is Team.RED:
@@ -710,42 +683,42 @@ class General(Piece):
             else:
                 opponent = Team.RED
             change = 0
-            # Receive a penalty of 10 points if the general has no admissible moves
+            # Nhận một khoản phạt 10 điểm nếu tướng không có nước đi hợp lệ
             if len(self.admissible_moves) == 0:
                 change += -10
-            # Receive a penalty of 15 points if the general is exposed
+            # Nhận một khoản phạt 15 điểm nếu tướng bị đối thủ ăn
             if General.is_general_exposed(self.board, self.team, opponent) is True:
                 change += -15
 
             return self._piece_value + change
 
-        # If the value pack is not found
+        # Nếu gói dữ liệu không tồn tại
         else:
             raise ValueError("Value pack is not found")
 
     def get_admissible_moves(self) -> list:
-        # Create a list of admissible moves for the general
+        # Tạo một danh sách các nước đi hợp lệ cho quân tướng
         admissible_moves = []
 
-        # Define possible direction of the piece
+        # Xác định hướng di chuyển
         x_direction = [1, -1, 0, 0]
         y_direction = [0, 0, 1, -1]
 
-        # Iterate through direction
+        # Duyệt qua các hướng
         for direction in range(4):
-            # Calculate the new position
+            # Tính toán vị trí mới
             new_position = (
                 self.position[0] + x_direction[direction],
                 self.position[1] + y_direction[direction],
             )
 
-            # Check if the new position is in the palace
+            # Kiểm tra xem vị trí mới có nằm trên cung điện không
             if self.is_position_in_palace(new_position):
-                # Check if there is any piece on the new position
+                # Kiểm tra xem vị trí mới có nằm trên bàn cờ không
                 if self.is_position_free(new_position):
                     admissible_moves.append(new_position)
 
-                # Check if the piece on the new position is on the enemy team
+                # Kiểm tra xem vị trí mới có phải là quân cờ đối thủ không
                 elif self.is_position_opponent(new_position):
                     admissible_moves.append(new_position)
 
@@ -753,67 +726,66 @@ class General(Piece):
 
     @staticmethod
     def is_general_exposed(board: list, current_team: Team, opponent: Team) -> bool:
-        """This method returns True if the general is exposed"""
-
-        # Find the position of the current team's General
+        """ Phương thức kiểm tra xem tướng có bị lộ mặt tướng không """
+        # Tìm vị trí của tướng
         cur_general_pos = None
 
         for y in range(Piece.BOUND_PALACE_Y[0], Piece.BOUND_PALACE_Y[1] + 1):
-            # Find the palace of current team
+            # Tìm vị trí của tướng theo hướng x
             bound_x = None
             if current_team is Team.RED:
                 bound_x = Piece.BOUND_PALACE_X_RED
             elif current_team is Team.BLACK:
                 bound_x = Piece.BOUND_PALACE_X_BLACK
 
-            # Find the general
+            # Tìm vị trí của tướng
             for x in range(bound_x[0], bound_x[1] + 1):
                 if board[x][y][1] == "G":
                     cur_general_pos = (x, y)
 
-        # Check if the general is exposed
-        # Possible directions of the cannon, the rook and the pawn
+        # Chiếu tướng nếu như tướng bị lộ mặt tướng
+        # Các hướng có thể của pháo, tốt, xe
         x_str_dir, y_str_dir = [0, 0, -1, 1], [1, -1, 0, 0]
 
-        # Possible directions of the horse
+        # Các hướng có thể của quân mã
         x_horse_offset = [2, 1, -1, -2, -2, -1, 1, 2]
         y_horse_offset = [-1, -2, -2, -1, 1, 2, 2, 1]
         x_orient, y_orient = [1, -1, -1, 1], [-1, -1, 1, 1]
 
-        # .Check the rook
+        # Chiếu bằng xe
         for direction in range(4):
             for steps in range(1, 10):
-                # Get the position
+                # Tính toán vị trí kiểm tra
                 check_pos = (
                     cur_general_pos[0] + steps * x_str_dir[direction],
                     cur_general_pos[1] + steps * y_str_dir[direction],
                 )
-                # If the check position is out of the board then break
+                # Nếu vị trí kiểm tra ra khỏi bàn cờ thì thoát voòng lặp
                 if Piece.is_position_on_board(check_pos) is False:
                     break
 
                 notation = board[check_pos[0]][check_pos[1]]
-                # If the check position is of the same team with the general then break
+                # Nếu quân xe và tướng cùng một đội thì thoát voòng lặp
                 if Team[notation[0]] is not Team.NONE:
-                    # If the enemy's rook is on the check position then return True
+                    # Nếu quân xe và tướng cùng khác đội thì trả về True
                     if Team[notation[0]] is opponent and notation[1] == "R":
                         return True
-                    # Otherwise break
+                    # Nếu không, thoát vòng lặp
                     else:
                         break
 
-        # .Check the horse
+        # Chiếu bằng mã
         for index in range(8):
             check_pos = (
                 cur_general_pos[0] + x_horse_offset[index],
                 cur_general_pos[1] + y_horse_offset[index],
             )
-            # If the check position is out of the board then break
+            # Nếu vị trí kiểm tra ra khỏi bàn cờ thì thoát vòng lặp
             if Piece.is_position_on_board(check_pos) is False:
                 continue
 
             notation = board[check_pos[0]][check_pos[1]]
-            # If the opponent horse is on the check position then return True
+            # Nếu quân mã và tướng khác đội thì trả về True
             if Team[notation[0]] is opponent and notation[1] == "H":
                 mid_pos = (
                     cur_general_pos[0] + x_orient[index // 2],
@@ -823,7 +795,7 @@ class General(Piece):
                 if mid_pos_notation == "NN":
                     return True
 
-        # .Check the cannon
+        # Chiếu bằng pháo
         for direction in range(4):
             piece_behind = 0
             for steps in range(1, 10):
@@ -831,58 +803,57 @@ class General(Piece):
                     cur_general_pos[0] + steps * x_str_dir[direction],
                     cur_general_pos[1] + steps * y_str_dir[direction],
                 )
-                # If the check position is out of the board then break
+                # Nếu vị trí kiểm tra ra khỏi bàn cờ thì thoát vòng lặp
                 if Piece.is_position_on_board(pos) is False:
                     break
 
                 notation = board[pos[0]][pos[1]]
-                # If there is 1 piece behind the check position
-                # and the enemy's cannon is on the check position, then return True
+                # Nếu quân pháo đứng sau 1 quân khác và tướng nằm trong vị trí chiếu thì trả về True
                 if (
                     piece_behind == 1
                     and Team[notation[0]] is opponent
                     and notation[1] == "C"
                 ):
                     return True
-                # Check whether there is a piece behind the check position
+                # Kiểm tra xem quân pháo có đứng sau 1 quân khác không
                 if notation != "NN":
                     piece_behind += 1
-                # Break if there are more than 1 piece behind the check position
+                # Nếu như có 2 quân đứng trước quân pháo thì thoát vòng lặp
                 if piece_behind > 1:
                     break
 
-        # .Check the pawn
-        # Check left and right positions
+        # Chiếu bằng tốt
+        # Kiểm tra tốt ở 2 hướng trái và phải
         for index in range(2):
             check_pos = (
                 cur_general_pos[0] + x_str_dir[index],
                 cur_general_pos[1] + y_str_dir[index],
             )
             notation = board[check_pos[0]][check_pos[1]]
-            # If the pawn is on the check position then return True
+            # Nếu như tốt và tướng ở vị trí chiếu thì trả về True
             if Team[notation[0]] is opponent and notation[1] == "P":
                 return True
-        # Check forward position
+        # Kiểm tra phía trước tốt
         forward_notation = board[cur_general_pos[0] + opponent.value][cur_general_pos[1]]
         if Team[forward_notation[0]] is opponent and forward_notation[1] == "P":
             return True
 
-        # .Check the general
+        # Chiếu bằng tướng
         for steps in range(1, 10):
             pos = (cur_general_pos[0] + steps * opponent.value, cur_general_pos[1])
-            # If the check position is out of the board then break
+            # Nếu vị trí kiểm tra ra khỏi bàn cờ thì thoát vòng lặp
             if Piece.is_position_on_board(pos) is False:
                 break
 
             notation = board[pos[0]][pos[1]]
             if notation == "NN":
                 continue
-            # If the piece is opponent's general then return True
+            # Nếu như tướng và tướng đối phương ở vị trí chiếu thì trả về True
             if notation[1] == "G":
                 return True
-            # If the piece is other pieces then break
+            # Nếu không, thoát vòng lặp
             else:
                 break
 
-        # If all check are passed, then return False
+        # Nếu như các trường hợp trên không xảy ra thì trả về False
         return False
