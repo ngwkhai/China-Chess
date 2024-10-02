@@ -1,11 +1,12 @@
 # Dự án Game Cờ Tướng
 
 ## Mô tả
-Dự án này là một trò chơi Cờ Tướng, được phát triển bằng Python với thư viện Pygame để xử lý giao diện người dùng (UI) và Minimax AI cho đối thủ máy. Người chơi có thể chơi với máy (PvE) hoặc chơi hai người (PvP).
+Dự án này là một trò chơi Cờ Tướng, được phát triển bằng Python với thư viện Pygame để xử lý giao diện người dùng (UI) và Minimax AI cho đối thủ máy. Người chơi có thể chơi với máy (PvE), chơi hai người (PvP) hoặc quan sát hai máy chơi.
 
 ## Tính năng
 - Chơi Cờ Tướng giữa người chơi và máy (Player vs AI).
 - Chơi hai người (Player1 vs Player2).
+- Quan sát hai máy chơi (AI1 vs AI2).
 - Giao diện đồ họa thân thiện với người dùng, hiển thị bàn cờ và các quân cờ.
 - AI được phát triển bằng thuật toán Minimax kết hợp tối ưu bằng Alpha-Beta Pruning.
 - Tích hợp các tài nguyên hình ảnh cho bàn cờ và quân cờ.
@@ -36,6 +37,7 @@ Dự án này là một trò chơi Cờ Tướng, được phát triển bằng 
 2. Chọn chế độ chơi từ menu chính:
 - **PvE**: Người chơi đấu với máy.
 - **PvP**: Hai người chơi.
+- **EvE**: Quan sát hai máy chơi.
 
 3. Sử dụng chuột để di chuyển quân cờ trên giao diện.
 
@@ -46,7 +48,7 @@ Dự án này là một trò chơi Cờ Tướng, được phát triển bằng 
     ├── game_tree.py       # Cấu trúc cây trò chơi và AI Minimax
     ├── node.py            # Tạo các nút trong cây trò chơi
     ├── gui_utilities.py   # Quản lý giao diện người dùng
-    ├── resources.py       # Tích hợp tài nguyên hình ảnh
+    ├── resource.py       # Tích hợp tài nguyên hình ảnh
     ├── main.py            # File khởi động chính
     └── resources/         # Thư mục chứa tài nguyên
 
@@ -65,11 +67,3 @@ Dự án này là một trò chơi Cờ Tướng, được phát triển bằng 
 ## Giấy phép
 Dự án này được phát hành dưới giấy phép MIT. Vui lòng xem file LICENSE để biết thêm chi tiết.
 
-### Giải thích chi tiết:
-1. **Mô tả**: Giới thiệu ngắn gọn về dự án và các tính năng chính.
-2. **Yêu cầu hệ thống**: Liệt kê các công cụ cần thiết để chạy dự án.
-3. **Hướng dẫn cài đặt**: Cung cấp các bước đơn giản để cài đặt và khởi chạy trò chơi.
-4. **Cách chơi**: Hướng dẫn cơ bản để chơi game.
-5. **Cấu trúc thư mục**: Cung cấp cái nhìn tổng quát về cấu trúc thư mục của dự án để dễ dàng điều hướng.
-6. **Cách đóng góp**: Hướng dẫn chi tiết về cách đóng góp vào dự án thông qua Git.
-7. **Giấy phép**: Đảm bảo rõ ràng về quyền sử dụng và chia sẻ mã nguồn.
