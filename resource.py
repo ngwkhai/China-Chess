@@ -49,13 +49,13 @@ def board_sprite():
 
 def background():
     """ Trả về hình nền của bàn cờ. """
-    background_img = pygame.image.load(RESOURCES_PATH + 'background.png')
+    background_img = pygame.image.load(RESOURCES_PATH + 'background.jpg')
     return background_img, (0, 0)
     
 
 def icon():
     """ Trả về hình ảnh quân cờ."""
-    icon_img = pygame.image.load(RESOURCES_PATH + 'xiangqi_icon.png')
+    icon_img = pygame.image.load(RESOURCES_PATH + 'chess_icon.png')
     return icon_img
 
 
