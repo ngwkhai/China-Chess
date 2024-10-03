@@ -62,8 +62,8 @@ def icon():
 def get_font(size, index):
     """Trả về phông chữ    """
     if index == 0:
-        return pygame.font.Font(RESOURCES_PATH + "fonts/" + "Real Chinese.otf", size)
+        return pygame.font.Font(RESOURCES_PATH + "fonts/" + "DFVN TAN - HARMONI.otf", size)
     elif index == 1:
-        return pygame.font.Font(RESOURCES_PATH + "fonts/" + "Analogist.ttf", size)
+        return pygame.font.Font(RESOURCES_PATH + "fonts/" + "DFVN Tango.otf", size)
     elif index == 2:
         return pygame.font.Font(RESOURCES_PATH + "fonts/" + "sanva font.ttf", size)
