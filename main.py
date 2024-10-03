@@ -1,3 +1,5 @@
+import sys
+
 import pygame
 import resource
 from gui_utilities import Button
@@ -9,6 +11,12 @@ pygame.init()
 SCREEN = pygame.display.set_mode((660, 664))
 pygame.display.set_caption("CỜ TƯỚNG")
 pygame.display.set_icon(resource.icon())
+
+# Đặt tốc độ làm mới
+REFRESH_RATE = 30
+
+# Tạo đối tượng đồng hồ
+clock = pygame.time.Clock()
 
 def main_menu():
     """Hàm này là màn hình menu chính"""
@@ -25,7 +33,7 @@ def main_menu():
     while True:
         # Nhận trạng thái trò chơi hiện tại
         mouse_pos = pygame.mouse.get_pos()
-        events = pygame.event.get()
+        events_list = pygame.event.get()
 
         # Vẽ menu chính
         # Vẽ background
@@ -40,9 +48,33 @@ def main_menu():
         for button in [pve_button, pvp_button, eve_button, quit_button]:
             button.draw(SCREEN)
 
+        # xử lý sự kiện
+        for event in events_list:
+            # Thoát khỏi trò chơi nếu nút QUIT được nhấp
+            if event.type == pygame.QUIT:
+                print("")
+                pygame.quit()
+                sys.exit()
+
+            # Xử lý sự kiện bấm vào các nút
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if pve_button.check_for_input(mouse_pos):
+                    pass
+                if pvp_button.check_for_input(mouse_pos):
+                    pass
+                if eve_button.check_for_input(mouse_pos):
+                    pass
+                if quit_button.check_for_input(mouse_pos):
+                    pygame.quit()
+                    sys.exit()
+
+
 
         # Cập nhật màn hình
         pygame.display.flip()
+
+        # Chờ khung hình tiếp theo
+        clock.tick(REFRESH_RATE)
 
 
 
