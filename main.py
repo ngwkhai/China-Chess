@@ -22,7 +22,7 @@ def main_menu():
     """Hàm này là màn hình menu chính"""
     # Tạo các nút
     pve_button = Button(image=pygame.image.load("resources/button/normal_rect.png"), pos=(120, 350),
-                        text_input="PvE", font=resource.get_font(40, 0), base_color="#AB001B", hovering_color="Black")
+                        text_input="Người và máy", font=resource.get_font(40, 0), base_color="#AB001B", hovering_color="Black")
     pvp_button = Button(image=pygame.image.load("resources/button/normal_rect.png"), pos=(330, 350),
                         text_input="PvP", font=resource.get_font(40, 0), base_color="#AB001B", hovering_color="Black")
     eve_button = Button(image=pygame.image.load("resources/button/normal_rect.png"), pos=(530, 350),
