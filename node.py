@@ -61,7 +61,6 @@ class NodeMinimax(Node):
         self._is_children_sorted = False
         self.minimax_value = None
 
-
     # Phương thức của đối tượng
     def minimax(
         self, depth: int, max_turn: bool, alpha: float = -inf, beta: float = inf
@@ -143,7 +142,6 @@ class NodeMinimax(Node):
 
         # Trả về một nút ngẫu nhiên trong danh sách
         return choice(best_children)
-
 class NodeMCTS(Node):
     """Lớp này đại diện cho một "nút Monte-Carlo tree search" trong cây trò chơi"""
 
@@ -356,7 +354,6 @@ class NodeExcavationMinimax(NodeMinimax):
     SIMULATION_FACTOR = 3
     DEPTH_COUNT = 3
     NORMALIZE_CONST = 6
-
 
     # Phương thức thể hiện
 
