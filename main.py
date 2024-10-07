@@ -2,7 +2,7 @@ import sys
 
 import pygame
 import resource
-from gui_utilities import Button, InputBox
+from gui_utilities import Button, InputBox, DropDown
 
 # Khởi tạo pygame
 pygame.init()
@@ -20,41 +20,41 @@ clock = pygame.time.Clock()
 
 def eve_menu():
     # Tạo một số tiện ích
-    # black_type = DropDown(
-    #     ["#000000", "#202020"],
-    #     ["#404040", "#606060"],
-    #     20, 290, 100, 30,
-    #     pygame.font.SysFont(None, 25),
-    #     "Bot", ["Minimax", "MCTS"]
-    # )
-    # black_value = DropDown(
-    #     ["#000000", "#202020"],
-    #     ["#404040", "#606060"],
-    #     180, 290, 100, 30,
-    #     pygame.font.SysFont(None, 25),
-    #     "Cấp độ", ["0", "1", "2"]
-    # )
-    # red_type = DropDown(
-    #     ["#DC1C13", "#EA4C46"],
-    #     ["#F07470", "#F1959B"],
-    #     350, 290, 100, 30,
-    #     pygame.font.SysFont(None, 25),
-    #     "Bot", ["Minimax", "MCTS"]
-    # )
-    # red_value = DropDown(
-    #     ["#DC1C13", "#EA4C46"],
-    #     ["#F07470", "#F1959B"],
-    #     510, 290, 100, 30,
-    #     pygame.font.SysFont(None, 25),
-    #     "Cấp độ", ["0", "1", "2"]
-    # )
+    black_type = DropDown(
+        ["#000000", "#202020"],
+        ["#404040", "#606060"],
+        20, 290, 100, 30,
+        resource.get_font(26, 0),
+        "Bot", ["Minimax", "MCTS"]
+    )
+    black_value = DropDown(
+        ["#000000", "#202020"],
+        ["#404040", "#606060"],
+        180, 290, 100, 30,
+        resource.get_font(26, 0),
+        "Cấp độ", ["0", "1", "2"]
+    )
+    red_type = DropDown(
+        ["#DC1C13", "#EA4C46"],
+        ["#F07470", "#F1959B"],
+        350, 290, 100, 30,
+        resource.get_font(26, 0),
+        "Bot", ["Minimax", "MCTS"]
+    )
+    red_value = DropDown(
+        ["#DC1C13", "#EA4C46"],
+        ["#F07470", "#F1959B"],
+        510, 290, 100, 30,
+        resource.get_font(26, 0),
+        "Cấp độ", ["0", "1", "2"]
+    )
 
-    num_box = InputBox(330, 125, 40, 40, pygame.font.SysFont(None, 35),
+    num_box = InputBox(330, 125, 40, 40, resource.get_font(30, 0),
                        "Black", "Red", "Số trận")
-    black_another_property = InputBox(165, 230, 40, 30, pygame.font.SysFont(
-        None, 25), "Black", "Red", "Độ sâu cho chép")
-    red_another_property = InputBox(495, 230, 40, 30, pygame.font.SysFont(
-        None, 25), "Red", "Black", "Độ sâu cho chép")
+    black_another_property = InputBox(165, 230, 40, 30, resource.get_font(26, 0),
+                                     "Black", "Red", "Độ sâu cho chép")
+    red_another_property = InputBox(495, 230, 40, 30, resource.get_font(26, 0),
+                                    "Red", "Black", "Độ sâu cho chép")
 
     start_button = Button(image=pygame.image.load("resources/button/normal_rect.png"), pos=(330.5, 450),
                           text_input="Bắt đầu", font=resource.get_font(40, 0), base_color="#AB001B", hovering_color="Black")
@@ -67,7 +67,7 @@ def eve_menu():
     while True:
         # Nhận trạng thái trò chơi hiện tại
         mouse_pos = pygame.mouse.get_pos()
-        events = pygame.event.get()
+        events_list = pygame.event.get()
 
         # Vẽ menu chính
         # Vẽ nền
@@ -102,6 +102,24 @@ def eve_menu():
         text = resource.get_font(30, 0).render("Cấp độ", True, "#AB001B")
         rect = text.get_rect(center=(560, 270))
         SCREEN.blit(text, rect)
+
+        # Vẽ nút
+        for button in [start_button, quit_button, back_button]:
+            button.draw(SCREEN)
+
+        # Vẽ danh sách
+        for lst in [black_type, black_value, red_type, red_value]:
+            selected_option = lst.update(events_list)
+            if selected_option >= 0:
+                lst.main = lst.options[selected_option]
+
+            lst.draw(SCREEN)
+
+        # Vẽ hộp nhập
+        for input_box in [num_box, black_another_property, red_another_property]:
+            input_box.update()
+            input_box.draw(SCREEN)
+
 
         # Cập nhật màn hình
         pygame.display.flip()

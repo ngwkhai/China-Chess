@@ -117,13 +117,13 @@ class InputBox:
             # Đổi màu hộp
             self.color = self.color_active if self.active else self.color_inactive
 
-    '''
+
     def update(self):
         # Resize the box if the text is too long.
         width = max(40, self.txt_surface.get_width()+10)
         self.rect.w = width
         self.rect.x = self.x - width/2
-    '''
+
 
     def draw(self, screen):
         # Blit the text.
