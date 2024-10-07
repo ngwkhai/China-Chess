@@ -120,6 +120,35 @@ def eve_menu():
             input_box.update()
             input_box.draw(SCREEN)
 
+        # Xử lý sự kiện
+        for event in events_list:
+            # Thoát nếu bấm exit
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+
+            # Xử lý khi bấm vào nút
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                # Nếu tất cả thông tin được điền đầy đủ
+                # Trò chơi sẽ bắt đầu
+                if start_button.check_for_input(mouse_pos):
+                    if (red_type.main == "Bot" or black_type.main == "Bot"
+                        or red_value.main == "Cấp độ" or black_value.main == "Cấp độ"
+                        or not num_box.text.isnumeric()
+                        or not black_another_property.text.isnumeric()
+                        or not red_another_property.text.isnumeric()
+                    ):
+                        continue
+
+                if quit_button.check_for_input(mouse_pos):
+                    pygame.quit()
+                    sys.exit()
+                if back_button.check_for_input(mouse_pos):
+                    main_menu()
+
+            for input_box in [num_box, black_another_property, red_another_property]:
+                input_box.handle_event(event)
+
 
         # Cập nhật màn hình
         pygame.display.flip()
