@@ -167,6 +167,41 @@ def main_menu():
         # Chờ khung hình tiếp theo
         clock.tick(REFRESH_RATE)
 
+def pve_menu() -> None:
+    # Tạo giao diện menu 
+
+    bot_type = DropDown(
+        ["#000000", "#202020"],
+        ["#404040", "#606060"],
+        20, 270, 100, 30,
+        pygame.font.SysFont(None, 25),
+        "Type", ["Minimax", "MCTS", "DyMinimax", "DeMinimax", "ExMinimax"]) # Chọn thuật toán
+
+    bot_value = DropDown(
+        ["#000000", "#202020"],
+        ["#404040", "#606060"],
+        180, 270, 100, 30,
+        pygame.font.SysFont(None, 25),
+        "Pack", ["0", "1", "2"])
+
+    team_select = DropDown(
+        ["#000000", "#202020"],
+        ["#404040", "#606060"],
+        430, 220, 150, 50,
+        pygame.font.SysFont(None, 30),
+        "Team", ["BLACK", "RED"])
+
+    bot_another_property = InputBox(165, 210, 40, 30, pygame.font.SysFont(
+        None, 25), "Black", "Red", "Depth/Time allowed")
+
+    start_button = Button(image=pygame.image.load("resources/button/normal_rect.png"), pos=(330.5, 430),
+                          text_input="Simulate", font=resources.get_font(40, 0), base_color="#AB001B", hovering_color="Black")
+
+    quit_button = Button(image=pygame.image.load("resources/button/small_rect.png"), pos=(165, 530),
+                         text_input="QUIT", font=resources.get_font(30, 0), base_color="Black", hovering_color="#AB001B")
+
+    back_button = Button(image=pygame.image.load("resources/button/small_rect.png"), pos=(495, 530),
+                         text_input="BACK", font=resources.get_font(30, 0), base_color="Black", hovering_color="#AB001B")
 
 
 if __name__ == "__main__":
