@@ -117,6 +117,15 @@ class InputBox:
             # Đổi màu hộp
             self.color = self.color_active if self.active else self.color_inactive
 
+        if event.type == pygame.KEYDOWN:
+            if self.active:
+                if event.key == pygame.K_BACKSPACE:
+                    self.text = self.text[:-1]
+                elif event.unicode.isdigit():
+                    self.text += event.unicode
+                self.txt_surface = self.font.render(
+                    self.text, True, self.color_inactive)
+
 
     def update(self):
         # Resize the box if the text is too long.
