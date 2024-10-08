@@ -3,7 +3,7 @@ from abc import ABC
 from cmath import inf
 
 from node import Node
-
+from team import Team
 
 class GameTree(ABC):
     """Lớp này chịu trách nhiệm về việc biểu diễn cây trò chơi"""

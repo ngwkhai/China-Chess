@@ -2,6 +2,10 @@ import sys
 
 import pygame
 import resource
+from game_state import GameState
+from game_tree import GameTree
+from team import Team
+from cmath import inf
 from gui_utilities import Button, InputBox, DropDown
 
 # Khởi tạo pygame
@@ -206,8 +210,6 @@ def main_menu():
                     pygame.quit()
                     sys.exit()
 
-
-
         # Cập nhật màn hình
         pygame.display.flip()
 
@@ -379,7 +381,7 @@ def pve_menu() -> None:
         ["#404040", "#606060"],
         20, 270, 100, 30,
         pygame.font.SysFont(None, 25),
-        "Type", ["Minimax", "MCTS", "DyMinimax", "DeMinimax", "ExMinimax"]) # Chọn thuật toán
+        "Type", ["Minimax", "MCTS"]) # Chọn thuật toán
 
     bot_value = DropDown(
         ["#000000", "#202020"],
@@ -407,7 +409,94 @@ def pve_menu() -> None:
     back_button = Button(image=pygame.image.load("resources/button/small_rect.png"), pos=(495, 530),
                          text_input="BACK", font=resources.get_font(30, 0), base_color="Black", hovering_color="#AB001B")
     
-    
+        # Start the game loop
+    while True:
+        # Get the current game status
+        mouse_pos = pygame.mouse.get_pos()
+        events_list = pygame.event.get()
+
+        # Draw
+        # .Background
+        bg_img, bg_pos = resources.background()
+        SCREEN.blit(bg_img, bg_pos)
+
+        # .Text
+        menu_text = resources.get_font(70, 0).render("PvE Menu", True, "Black")
+        menu_rect = menu_text.get_rect(center=(330.5, 60))
+        SCREEN.blit(menu_text, menu_rect)
+
+        text = resources.get_font(50, 0).render("Bot select", True, "Black")
+        rect = text.get_rect(center=(165, 165))
+        SCREEN.blit(text, rect)
+
+        text = resources.get_font(30, 0).render("Bot type", True, "Black")
+        rect = text.get_rect(center=(70, 250))
+        SCREEN.blit(text, rect)
+
+        text = resources.get_font(30, 0).render("Value pack", True, "Black")
+        rect = text.get_rect(center=(230, 250))
+        SCREEN.blit(text, rect)
+
+        text = resources.get_font(50, 0).render("Team Select", True, "Black")
+        rect = text.get_rect(center=(495, 165))
+        SCREEN.blit(text, rect)
+
+        # .Button
+        for button in [start_button, quit_button, back_button]:
+            button.draw(SCREEN)
+
+        # .List
+        for lst in [bot_type, bot_value, team_select]:
+            selected_option = lst.update(events_list)
+            if selected_option >= 0:
+                lst.main = lst.options[selected_option]
+
+            lst.draw(SCREEN)
+
+        # .Input box
+        for input_box in [bot_another_property]:
+            input_box.update()
+            input_box.draw(SCREEN)
+
+        # Handle events
+        for event in events_list:
+            # Quit the game if the exit button is clicked
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+
+            # Handle the button click event
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if start_button.check_for_input(mouse_pos):
+                    if (
+                        bot_type.main == "Type"
+                        or bot_value.main == "Pack"
+                        or team_select.main == "Team"
+                        or not bot_another_property.text.isnumeric()
+                    ):
+                        continue
+
+                    pve_screen(
+                        str_to_type(bot_type.main),
+                        int(bot_value.main),
+                        int(bot_another_property.text),
+                        Team[team_select.main]
+                    )
+                
+                if quit_button.check_for_input(mouse_pos):
+                    pygame.quit()
+                    sys.exit()
+                if back_button.check_for_input(mouse_pos):
+                    main_menu()
+
+            # Xử lí input box 
+            for input_box in [bot_another_property]:
+                input_box.handle_event(event)
+
+         # Cập nhật màn hình
+        pygame.display.flip()
+
+        clock.tick(REFRESH_RATE)
 
 def pvp_menu():
     # Tạo một số tiện ích

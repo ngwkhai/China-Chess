@@ -2,7 +2,7 @@
 from abc import ABC, abstractmethod
 from turtledemo.penrose import inflatedart
 from random import choice, shuffle
-
+from cmath import inf
 from game_state import GameState
 from team import Team
 
