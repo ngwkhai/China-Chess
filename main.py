@@ -2,7 +2,7 @@ import sys
 
 import pygame
 import resource
-from gui_utilities import Button, InputBox
+from gui_utilities import Button, InputBox, DropDown
 
 # Khởi tạo pygame
 pygame.init()
@@ -20,41 +20,41 @@ clock = pygame.time.Clock()
 
 def eve_menu():
     # Tạo một số tiện ích
-    # black_type = DropDown(
-    #     ["#000000", "#202020"],
-    #     ["#404040", "#606060"],
-    #     20, 290, 100, 30,
-    #     pygame.font.SysFont(None, 25),
-    #     "Bot", ["Minimax", "MCTS"]
-    # )
-    # black_value = DropDown(
-    #     ["#000000", "#202020"],
-    #     ["#404040", "#606060"],
-    #     180, 290, 100, 30,
-    #     pygame.font.SysFont(None, 25),
-    #     "Cấp độ", ["0", "1", "2"]
-    # )
-    # red_type = DropDown(
-    #     ["#DC1C13", "#EA4C46"],
-    #     ["#F07470", "#F1959B"],
-    #     350, 290, 100, 30,
-    #     pygame.font.SysFont(None, 25),
-    #     "Bot", ["Minimax", "MCTS"]
-    # )
-    # red_value = DropDown(
-    #     ["#DC1C13", "#EA4C46"],
-    #     ["#F07470", "#F1959B"],
-    #     510, 290, 100, 30,
-    #     pygame.font.SysFont(None, 25),
-    #     "Cấp độ", ["0", "1", "2"]
-    # )
+    black_type = DropDown(
+        ["#000000", "#202020"],
+        ["#404040", "#606060"],
+        20, 290, 100, 30,
+        resource.get_font(26, 0),
+        "Bot", ["Minimax", "MCTS"]
+    )
+    black_value = DropDown(
+        ["#000000", "#202020"],
+        ["#404040", "#606060"],
+        180, 290, 100, 30,
+        resource.get_font(26, 0),
+        "Cấp độ", ["0", "1", "2"]
+    )
+    red_type = DropDown(
+        ["#DC1C13", "#EA4C46"],
+        ["#F07470", "#F1959B"],
+        350, 290, 100, 30,
+        resource.get_font(26, 0),
+        "Bot", ["Minimax", "MCTS"]
+    )
+    red_value = DropDown(
+        ["#DC1C13", "#EA4C46"],
+        ["#F07470", "#F1959B"],
+        510, 290, 100, 30,
+        resource.get_font(26, 0),
+        "Cấp độ", ["0", "1", "2"]
+    )
 
-    num_box = InputBox(330, 125, 40, 40, pygame.font.SysFont(None, 35),
+    num_box = InputBox(330, 125, 40, 40, resource.get_font(30, 0),
                        "Black", "Red", "Số trận")
-    black_another_property = InputBox(165, 230, 40, 30, pygame.font.SysFont(
-        None, 25), "Black", "Red", "Độ sâu cho chép")
-    red_another_property = InputBox(495, 230, 40, 30, pygame.font.SysFont(
-        None, 25), "Red", "Black", "Độ sâu cho chép")
+    black_another_property = InputBox(165, 230, 40, 30, resource.get_font(26, 0),
+                                     "Black", "Red", "Độ sâu cho chép")
+    red_another_property = InputBox(495, 230, 40, 30, resource.get_font(26, 0),
+                                    "Red", "Black", "Độ sâu cho chép")
 
     start_button = Button(image=pygame.image.load("resources/button/normal_rect.png"), pos=(330.5, 450),
                           text_input="Bắt đầu", font=resource.get_font(40, 0), base_color="#AB001B", hovering_color="Black")
@@ -67,7 +67,7 @@ def eve_menu():
     while True:
         # Nhận trạng thái trò chơi hiện tại
         mouse_pos = pygame.mouse.get_pos()
-        events = pygame.event.get()
+        events_list = pygame.event.get()
 
         # Vẽ menu chính
         # Vẽ nền
@@ -102,6 +102,53 @@ def eve_menu():
         text = resource.get_font(30, 0).render("Cấp độ", True, "#AB001B")
         rect = text.get_rect(center=(560, 270))
         SCREEN.blit(text, rect)
+
+        # Vẽ nút
+        for button in [start_button, quit_button, back_button]:
+            button.draw(SCREEN)
+
+        # Vẽ danh sách
+        for lst in [black_type, black_value, red_type, red_value]:
+            selected_option = lst.update(events_list)
+            if selected_option >= 0:
+                lst.main = lst.options[selected_option]
+
+            lst.draw(SCREEN)
+
+        # Vẽ hộp nhập
+        for input_box in [num_box, black_another_property, red_another_property]:
+            input_box.update()
+            input_box.draw(SCREEN)
+
+        # Xử lý sự kiện
+        for event in events_list:
+            # Thoát nếu bấm exit
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+
+            # Xử lý khi bấm vào nút
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                # Nếu tất cả thông tin được điền đầy đủ
+                # Trò chơi sẽ bắt đầu
+                if start_button.check_for_input(mouse_pos):
+                    if (red_type.main == "Bot" or black_type.main == "Bot"
+                        or red_value.main == "Cấp độ" or black_value.main == "Cấp độ"
+                        or not num_box.text.isnumeric()
+                        or not black_another_property.text.isnumeric()
+                        or not red_another_property.text.isnumeric()
+                    ):
+                        continue
+
+                if quit_button.check_for_input(mouse_pos):
+                    pygame.quit()
+                    sys.exit()
+                if back_button.check_for_input(mouse_pos):
+                    main_menu()
+
+            for input_box in [num_box, black_another_property, red_another_property]:
+                input_box.handle_event(event)
+
 
         # Cập nhật màn hình
         pygame.display.flip()
@@ -151,7 +198,7 @@ def main_menu():
                 if pve_button.check_for_input(mouse_pos):
                     pass
                 if pvp_button.check_for_input(mouse_pos):
-                    pass
+                    pvp_menu()
                 if eve_button.check_for_input(mouse_pos):
                     eve_menu()
                 if quit_button.check_for_input(mouse_pos):
@@ -359,98 +406,89 @@ def pve_menu() -> None:
 
     back_button = Button(image=pygame.image.load("resources/button/small_rect.png"), pos=(495, 530),
                          text_input="BACK", font=resources.get_font(30, 0), base_color="Black", hovering_color="#AB001B")
+    
+    
 
-    # Start the game loop
+def pvp_menu():
+    # Tạo một số tiện ích
+
+    num_box = InputBox(330, 125, 40, 40, resource.get_font(30, 0),
+                       "Black", "Red", "Số trận")
+
+    start_button = Button(image=pygame.image.load("resources/button/normal_rect.png"), pos=(330.5, 450),
+                          text_input="Bắt đầu", font=resource.get_font(40, 0), base_color="#AB001B", hovering_color="Black")
+    quit_button = Button(image=pygame.image.load("resources/button/small_rect.png"), pos=(165, 550),
+                         text_input="Thoát", font=resource.get_font(30, 0), base_color="Black", hovering_color="#AB001B")
+    back_button = Button(image=pygame.image.load("resources/button/small_rect.png"), pos=(495, 550),
+                         text_input="Trở lại", font=resource.get_font(30, 0), base_color="Black", hovering_color="#AB001B")
+
+    # Bắt đầu vòng lặp trò chơi
     while True:
-        # Get the current game status
+        # Nhận trạng thái trò chơi hiện tại
         mouse_pos = pygame.mouse.get_pos()
         events_list = pygame.event.get()
 
-        # Draw
-        # .Background
-        bg_img, bg_pos = resources.background()
+        # Vẽ menu chính
+        # Vẽ nền
+        bg_img, bg_pos = resource.background()
         SCREEN.blit(bg_img, bg_pos)
 
-        # .Text
-        menu_text = resources.get_font(70, 0).render("PvE Menu", True, "Black")
+        menu_text = resource.get_font(70, 0).render("Chuẩn bị", True, "Black")
         menu_rect = menu_text.get_rect(center=(330.5, 60))
         SCREEN.blit(menu_text, menu_rect)
 
-        text = resources.get_font(50, 0).render("Bot select", True, "Black")
-        rect = text.get_rect(center=(165, 165))
+        # Vẽ chữ
+        text = resource.get_font(60, 0).render("Black", True, "Black")
+        rect = text.get_rect(center=(165, 185))
         SCREEN.blit(text, rect)
 
-        text = resources.get_font(30, 0).render("Bot type", True, "Black")
-        rect = text.get_rect(center=(70, 250))
+        text = resource.get_font(30, 0).render("Player 1", True, "Black")
+        rect = text.get_rect(center=(165, 225))
         SCREEN.blit(text, rect)
 
-        text = resources.get_font(30, 0).render("Value pack", True, "Black")
-        rect = text.get_rect(center=(230, 250))
+        text = resource.get_font(60, 0).render("Red", True, "#AB001B")
+        rect = text.get_rect(center=(495, 185))
         SCREEN.blit(text, rect)
 
-        text = resources.get_font(50, 0).render("Team Select", True, "Black")
-        rect = text.get_rect(center=(495, 165))
+        text = resource.get_font(30, 0).render("Player 2", True, "#AB001B")
+        rect = text.get_rect(center=(495, 225))
         SCREEN.blit(text, rect)
 
-        # .Button
+        # Vẽ nút
         for button in [start_button, quit_button, back_button]:
             button.draw(SCREEN)
 
-        # .List
-        for lst in [bot_type, bot_value, team_select]:
-            selected_option = lst.update(events_list)
-            if selected_option >= 0:
-                lst.main = lst.options[selected_option]
+        # Vẽ hộp nhập
+        num_box.update()
+        num_box.draw(SCREEN)
 
-            lst.draw(SCREEN)
-
-        # .Input box
-        for input_box in [bot_another_property]:
-            input_box.update()
-            input_box.draw(SCREEN)
-
-        # Handle events
+        # Xử lý sự kiện
         for event in events_list:
-            # Quit the game if the exit button is clicked
+            # Thoát nếu bấm exit
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
 
-            # Handle the button click event
+            # Xử lý khi bấm vào nút
             if event.type == pygame.MOUSEBUTTONDOWN:
+                # Nếu tất cả thông tin được điền đầy đủ
+                # Trò chơi sẽ bắt đầu
                 if start_button.check_for_input(mouse_pos):
-                    if (
-                        bot_type.main == "Type"
-                        or bot_value.main == "Pack"
-                        or team_select.main == "Team"
-                        or not bot_another_property.text.isnumeric()
-                    ):
+                    if not num_box.text.isnumeric():
                         continue
 
-                    pve_screen(
-                        str_to_type(bot_type.main),
-                        int(bot_value.main),
-                        int(bot_another_property.text),
-                        Team[team_select.main]
-                    )
                 if quit_button.check_for_input(mouse_pos):
                     pygame.quit()
                     sys.exit()
                 if back_button.check_for_input(mouse_pos):
                     main_menu()
 
-            # Handle the input box events
-            for input_box in [bot_another_property]:
-                input_box.handle_event(event)
+            num_box.handle_event(event)
 
-         # Update the screen
+        # Cập nhật màn hình
         pygame.display.flip()
-
-        # Wait for the next frame
+        # Thời gian khung hình
         clock.tick(REFRESH_RATE)
-
-
-
 
 if __name__ == "__main__":
     main_menu()
