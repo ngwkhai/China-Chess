@@ -35,7 +35,34 @@ def str_to_type(type_str: str) -> GameTree:
     if type_str == 'Minimax':
         return GameTreeMinimax
     elif type_str == 'MCTS':
+        pass
         return GameTreeMCTS
+
+def draw_gamestate(game_state: GameState, inverse: bool = False) -> None:
+    """Hàm vẽ trạng thái trò chơi"""
+
+    # Vẽ bàn cờ
+    board_img, board_position = resource.board_sprite()
+    SCREEN.blit(board_img, board_position)
+
+    # Vẽ quân cờ
+    for x in range(GameState.BOARD_SIZE_X):
+        for y in range(GameState.BOARD_SIZE_Y):
+            notation = game_state.board[x, y]
+
+            # Bỏ qua nếu không có quân nào ở vị trí
+            if notation == "NN":
+                continue
+
+            # Tạo một thực thể quân cờ
+            piece = Piece.create_instance(
+                (abs(x - int(inverse) * 9), y),
+                notation, game_state.board, None, None
+            )
+
+            # Vẽ quân cờ
+            piece_img, piece_position = resource.piece_sprite(piece)
+            SCREEN.blit(piece_img, piece_position)
 
 def simulation_screen(
         red_type: str,
