@@ -16,7 +16,7 @@ def piece_sprite(piece):
     position_x = START_X + piece.position[1] * STEP_Y
     position_y = START_Y + piece.position[0] * STEP_Y
 
-#    piece_img = pygame.image.load(RESOURCES_PATH + 'board\' + str(piece) + '.png' )
+    piece_img = pygame.image.load(RESOURCES_PATH + 'board/' + str(piece) + '.png')
     return piece_img, (position_x, position_y)
 
 def chosen_ring_sprite(pos, inverse: bool = False):
