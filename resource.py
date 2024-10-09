@@ -49,7 +49,7 @@ def board_sprite():
 
 def background():
     """ Trả về hình nền của bàn cờ. """
-    background_img = pygame.image.load(RESOURCES_PATH + 'background.jpg')
+    background_img = pygame.image.load(RESOURCES_PATH + 'background.png')
     return background_img, (0, 0)
     
 

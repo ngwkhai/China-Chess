@@ -40,7 +40,7 @@ def str_to_type(type_str: str) -> GameTree:
         return GameTreeMinimax
     elif type_str == 'MCTS':
         pass
-        return GameTreeMCTS
+        
 
 def draw_gamestate(game_state: GameState, inverse: bool = False) -> None:
     """Hàm vẽ trạng thái trò chơi"""
@@ -112,7 +112,7 @@ def simulation_screen(
                           text_input="Dừng", font=resource.get_font(40, 0), base_color="#AB001B", hovering_color="Black")
 
     # Mở rộng kích thước của màn hình
-    SCREEN = pygame.display.set_mode((900, 664))
+    SCREEN = pygame.display.set_mode((896, 664))
     MOVE_TIME = 0.5
 
     # Tạo các biến cần thiết
