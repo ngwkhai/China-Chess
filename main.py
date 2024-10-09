@@ -398,7 +398,7 @@ def pve_menu():
         "Màu quân", ["BLACK", "RED"])
         
 
-    bot_another_property = InputBox(165, 230, 40, 30, resource.get_font(26, 0),
+    bot_another_property = InputBox(165, 210, 40, 30, resource.get_font(26, 0),
                                      "Black", "Red", "Độ sâu cho chép")
 
     start_button = Button(image=pygame.image.load("resources/button/normal_rect.png"), pos=(330.5, 430),
@@ -438,7 +438,7 @@ def pve_menu():
         rect = text.get_rect(center=(230, 250))
         SCREEN.blit(text, rect)
 
-        text = resource.get_font(50, 0).render("Quân", True, "Black")
+        text = resource.get_font(58, 0).render("Quân", True, "Black")
         rect = text.get_rect(center=(495, 165))
         SCREEN.blit(text, rect)
 
