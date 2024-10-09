@@ -237,10 +237,10 @@ def main_menu():
 
 #     #
 #     quit_button = Button(image=pygame.image.load("resources/button/small_rect.png"), pos=(165, 530),
-#                          text_input="QUIT", font=resources.get_font(30, 0), base_color="Black", hovering_color="#AB001B")
+#                          text_input="QUIT", font=resource.get_font(30, 0), base_color="Black", hovering_color="#AB001B")
 
 #     back_button = Button(image=pygame.image.load("resources/button/small_rect.png"), pos=(495, 530),
-#                          text_input="BACK", font=resources.get_font(30, 0), base_color="Black", hovering_color="#AB001B")
+#                          text_input="BACK", font=resource.get_font(30, 0), base_color="Black", hovering_color="#AB001B")
 
 #     # Bắt đầu vòng lặp cho trò chơi
 #     while True:
