@@ -334,7 +334,7 @@ def main_menu():
             # Xử lý sự kiện bấm vào các nút
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if pve_button.check_for_input(mouse_pos):
-                    pass
+                    pve_menu()
                 if pvp_button.check_for_input(mouse_pos):
                     pvp_menu()
                 if eve_button.check_for_input(mouse_pos):
@@ -350,198 +350,199 @@ def main_menu():
         # Chờ khung hình tiếp theo
         clock.tick(REFRESH_RATE)
 
-def pve_screen(
-    bot_type: GameTree,
-    bot_value: int,
-    bot_another_property: int,
-    player_team: Team
-) -> None:
+# def pve_screen(
+#     bot_type: GameTree,
+#     bot_value: int,
+#     bot_another_property: int,
+#     player_team: Team
+# ) -> None:
 
-    # Tạo biến cho bot
-    bot = bot_type(Team.get_reverse_team(player_team), bot_another_property, bot_value)
-    is_bot_process = False
+#     # Tạo biến cho bot
+#     bot = bot_type(Team.get_reverse_team(player_team), bot_another_property, bot_value)
+#     is_bot_process = False
 
-    # Tạo biến cho người chơi
-    player_turn = player_team is Team.RED
-    player_gamestate = GameState.generate_initial_game_state()
+#     # Tạo biến cho người chơi
+#     player_turn = player_team is Team.RED
+#     player_gamestate = GameState.generate_initial_game_state()
 
-    # Tạo biến di chuyển 
-    position_chosen, piece_chosen = None, None
-    last_move = None
+#     # Tạo biến di chuyển 
+#     position_chosen, piece_chosen = None, None
+#     last_move = None
 
-    #
-    quit_button = Button(image=pygame.image.load("resources/button/small_rect.png"), pos=(165, 530),
-                         text_input="QUIT", font=resources.get_font(30, 0), base_color="Black", hovering_color="#AB001B")
+#     #
+#     quit_button = Button(image=pygame.image.load("resources/button/small_rect.png"), pos=(165, 530),
+#                          text_input="QUIT", font=resources.get_font(30, 0), base_color="Black", hovering_color="#AB001B")
 
-    back_button = Button(image=pygame.image.load("resources/button/small_rect.png"), pos=(495, 530),
-                         text_input="BACK", font=resources.get_font(30, 0), base_color="Black", hovering_color="#AB001B")
+#     back_button = Button(image=pygame.image.load("resources/button/small_rect.png"), pos=(495, 530),
+#                          text_input="BACK", font=resources.get_font(30, 0), base_color="Black", hovering_color="#AB001B")
 
-    # Bắt đầu vòng lặp cho trò chơi
-    while True:
-        # Lấy trạng thái hiện tại
-        mouse_pos = pygame.mouse.get_pos()
-        events_list = pygame.event.get()
-        win_status = player_gamestate.get_team_win()
+#     # Bắt đầu vòng lặp cho trò chơi
+#     while True:
+#         # Lấy trạng thái hiện tại
+#         mouse_pos = pygame.mouse.get_pos()
+#         events_list = pygame.event.get()
+#         win_status = player_gamestate.get_team_win()
 
-        # Xử lí event
-        for event in events_list:
-            # Thoát trò chơi nếu bấm vào nút thoát
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
+#         # Xử lí event
+#         for event in events_list:
+#             # Thoát trò chơi nếu bấm vào nút thoát
+#             if event.type == pygame.QUIT:
+#                 pygame.quit()
+#                 sys.exit()
 
-            # Khi trò chơi kết thúc, thoát hoặc quay lại menu ban đầu
-            if win_status is not Team.NONE and event.type == pygame.MOUSEBUTTONDOWN:
-                if quit_button.check_for_input(mouse_pos):
-                    pygame.quit()
-                    sys.exit()
-                if back_button.check_for_input(mouse_pos):
-                    pve_menu()
+#             # Khi trò chơi kết thúc, thoát hoặc quay lại menu ban đầu
+#             if win_status is not Team.NONE and event.type == pygame.MOUSEBUTTONDOWN:
+#                 if quit_button.check_for_input(mouse_pos):
+#                     pygame.quit()
+#                     sys.exit()
+#                 if back_button.check_for_input(mouse_pos):
+#                     pve_menu()
 
-        # .Background
-        SCREEN.fill(((241, 203, 157)))
+#         # .Background
+#         SCREEN.fill(((241, 203, 157)))
 
-        # Trạng thái trò chơi
-        draw_gamestate(player_gamestate, player_team is Team.BLACK)
+#         # Trạng thái trò chơi
+#         draw_gamestate(player_gamestate, player_team is Team.BLACK)
 
-        # Chọn
-        if position_chosen is not None:
-            chosen_ring_img, draw_pos = resources.chosen_ring_sprite(position_chosen)
-            SCREEN.blit(chosen_ring_img, draw_pos)
+#         # Chọn
+#         if position_chosen is not None:
+#             chosen_ring_img, draw_pos = resources.chosen_ring_sprite(position_chosen)
+#             SCREEN.blit(chosen_ring_img, draw_pos)
 
-        # Hiển thị hình ảnh của các vòng tròn tương ứng với nước đi cuối cùng
-        if last_move is not None:
-            chosen_ring_img, draw_pos = resources.chosen_ring_sprite(last_move[0], player_team is Team.BLACK)
-            SCREEN.blit(chosen_ring_img, draw_pos)
+#         # Hiển thị hình ảnh của các vòng tròn tương ứng với nước đi cuối cùng
+#         if last_move is not None:
+#             chosen_ring_img, draw_pos = resources.chosen_ring_sprite(last_move[0], player_team is Team.BLACK)
+#             SCREEN.blit(chosen_ring_img, draw_pos)
 
-            chosen_ring_img, draw_pos = resources.chosen_ring_sprite(last_move[1], player_team is Team.BLACK)
-            SCREEN.blit(chosen_ring_img, draw_pos)
+#             chosen_ring_img, draw_pos = resources.chosen_ring_sprite(last_move[1], player_team is Team.BLACK)
+#             SCREEN.blit(chosen_ring_img, draw_pos)
 
-        # Nếu trò chơi kết thúc, hãy rút thông báo và nhấn nút
-        if win_status is not Team.NONE:
-            # Thông báo
-            pygame.draw.rect(SCREEN, "#AB001B", pygame.Rect(0, 270, 660, 120))
-            pygame.draw.rect(SCREEN, "#F6F5E0", pygame.Rect(4, 274, 652, 112))
+#         # Nếu trò chơi kết thúc, hãy rút thông báo và nhấn nút
+#         if win_status is not Team.NONE:
+#             # Thông báo
+#             pygame.draw.rect(SCREEN, "#AB001B", pygame.Rect(0, 270, 660, 120))
+#             pygame.draw.rect(SCREEN, "#F6F5E0", pygame.Rect(4, 274, 652, 112))
 
-            if win_status is player_team:
-                text = resources.get_font(50, 0).render("Xin chúc mừng, bạn đã thắng.", True, "Black")
-            else:
-                text = resources.get_font(50, 0).render("Chúc bạn may mắn lần sau.", True, "Black")
-            rect = text.get_rect(center=(330.5, 330))
-            SCREEN.blit(text, rect)
+#             if win_status is player_team:
+#                 text = resources.get_font(50, 0).render("Xin chúc mừng, bạn đã thắng.", True, "Black")
+#             else:
+#                 text = resources.get_font(50, 0).render("Chúc bạn may mắn lần sau.", True, "Black")
+#             rect = text.get_rect(center=(330.5, 330))
+#             SCREEN.blit(text, rect)
 
-            # Buttons
-            for button in [quit_button, back_button]:
-                button.draw(SCREEN)
+#             # Buttons
+#             for button in [quit_button, back_button]:
+#                 button.draw(SCREEN)
 
-        # Xử lí di chuyển
-        else:
-            # Lượt người chơi
-            if player_turn:
-                for event in events_list:
-                    if event.type == pygame.MOUSEBUTTONDOWN:
-                        # Tính toán vị trí nhấp chuột trong UI, vị trí nhấp chuột trong bảng trạng thái trò chơi
-                        click_pos = resources.get_piece_position(mouse_pos)
-                        board_pos = resources.get_piece_position(mouse_pos, player_team is Team.BLACK)
+#         # Xử lí di chuyển
+#         else:
+#             # Lượt người chơi
+#             if player_turn:
+#                 for event in events_list:
+#                     if event.type == pygame.MOUSEBUTTONDOWN:
+#                         # Tính toán vị trí nhấp chuột trong UI, vị trí nhấp chuột trong bảng trạng thái trò chơi
+#                         click_pos = resources.get_piece_position(mouse_pos)
+#                         board_pos = resources.get_piece_position(mouse_pos, player_team is Team.BLACK)
 
-                       # Nếu vị trí nhấp chuột nằm ngoài bảng hoặc trên quân cờ đã chọn => bỏ chọn quân cờ
-                        if click_pos is None or click_pos == position_chosen:
-                            position_chosen, piece_chosen = None, None
-                            continue
+#                        # Nếu vị trí nhấp chuột nằm ngoài bảng hoặc trên quân cờ đã chọn => bỏ chọn quân cờ
+#                         if click_pos is None or click_pos == position_chosen:
+#                             position_chosen, piece_chosen = None, None
+#                             continue
 
-                        notation = player_gamestate.board[board_pos[0]][board_pos[1]]
-                        # Nếu quân cờ thuộc về người chơi => chọn quân cờ đó
-                        if Team[notation[0]] is player_team:
-                            position_chosen = click_pos
-                            piece_chosen = Piece.create_instance(
-                                board_pos, 
-                                notation, 
-                                player_gamestate.board, 
-                                None, None
-                            )
+#                         notation = player_gamestate.board[board_pos[0]][board_pos[1]]
+#                         # Nếu quân cờ thuộc về người chơi => chọn quân cờ đó
+#                         if Team[notation[0]] is player_team:
+#                             position_chosen = click_pos
+#                             piece_chosen = Piece.create_instance(
+#                                 board_pos, 
+#                                 notation, 
+#                                 player_gamestate.board, 
+#                                 None, None
+#                             )
 
-                        # Nếu vị trí nhấp chuột nằm trong danh sách các nước đi được phép của quân cờ đã chọn
-                        elif piece_chosen is not None and board_pos in piece_chosen.admissible_moves:
-                            new_gamestate = player_gamestate.generate_game_state_with_move(piece_chosen.position, board_pos)
-                            # Nếu nước đi hợp lệ thì di chuyển đến vị trí đó
-                            if new_gamestate is not None:
-                                player_gamestate = new_gamestate[0]
-                                bot.move_to_child_node_with_move(piece_chosen.position, board_pos)
+#                         # Nếu vị trí nhấp chuột nằm trong danh sách các nước đi được phép của quân cờ đã chọn
+#                         elif piece_chosen is not None and board_pos in piece_chosen.admissible_moves:
+#                             new_gamestate = player_gamestate.generate_game_state_with_move(piece_chosen.position, board_pos)
+#                             # Nếu nước đi hợp lệ thì di chuyển đến vị trí đó
+#                             if new_gamestate is not None:
+#                                 player_gamestate = new_gamestate[0]
+#                                 bot.move_to_child_node_with_move(piece_chosen.position, board_pos)
 
-                                last_move = (piece_chosen.position, board_pos)
-                                position_chosen, piece_chosen = None, None
-                                player_turn = False
+#                                 last_move = (piece_chosen.position, board_pos)
+#                                 position_chosen, piece_chosen = None, None
+#                                 player_turn = False
 
-            # Lượt bot
-            else:
-                # Xử lí bot
-                if is_bot_process is False:
-                    # Tạo luồng chạy bot
-                    bot_thread = threading.Thread(
-                        target=bot.process, args=(moves_queue,))
-                    bot_thread.start()
+#             # Lượt bot
+#             else:
+#                 # Xử lí bot
+#                 if is_bot_process is False:
+#                     # Tạo luồng chạy bot
+#                     bot_thread = threading.Thread(
+#                         target=bot.process, args=(moves_queue,))
+#                     bot_thread.start()
 
-                    # Đánh dấu bot đã chạy
-                    is_bot_process = True
+#                     # Đánh dấu bot đã chạy
+#                     is_bot_process = True
 
-                # Di chuyển
-                try:
-                    # Di chuyển quân 
-                    old_pos, new_pos = moves_queue.pop(0)
-                    player_gamestate = player_gamestate.generate_game_state_with_move(old_pos, new_pos)[0]
+#                 # Di chuyển
+#                 try:
+#                     # Di chuyển quân 
+#                     old_pos, new_pos = moves_queue.pop(0)
+#                     player_gamestate = player_gamestate.generate_game_state_with_move(old_pos, new_pos)[0]
 
-                    # End the bot run thread
-                    bot_thread.join()
+#                     # End the bot run thread
+#                     bot_thread.join()
 
-                    # Post process
-                    is_bot_process = False
-                    player_turn = True
-                    last_move = (old_pos, new_pos)
-                except IndexError:
-                    pass
+#                     # Post process
+#                     is_bot_process = False
+#                     player_turn = True
+#                     last_move = (old_pos, new_pos)
+#                 except IndexError:
+#                     pass
 
-        # Cập nhật màn hình
-        pygame.display.flip()
+#         # Cập nhật màn hình
+#         pygame.display.flip()
 
-        # Đợi đến frame tiếp theo
-        clock.tick(REFRESH_RATE)
+#         # Đợi đến frame tiếp theo
+#         clock.tick(REFRESH_RATE)
 
 
-def pve_menu() -> None:
+def pve_menu():
     # Tạo giao diện menu 
 
     bot_type = DropDown(
         ["#000000", "#202020"],
         ["#404040", "#606060"],
         20, 270, 100, 30,
-        pygame.font.SysFont(None, 25),
-        "Type", ["Minimax", "MCTS"]) # Chọn thuật toán
+        resource.get_font(26, 0),
+        "Kiểu Bot", ["Minimax", "MCTS"]) # Chọn thuật toán
 
     bot_value = DropDown(
         ["#000000", "#202020"],
         ["#404040", "#606060"],
         180, 270, 100, 30,
-        pygame.font.SysFont(None, 25),
-        "Pack", ["0", "1", "2"])
+        resource.get_font(26, 0),
+        "Cấp độ", ["0", "1", "2"])
 
     team_select = DropDown(
         ["#000000", "#202020"],
         ["#404040", "#606060"],
         430, 220, 150, 50,
         pygame.font.SysFont(None, 30),
-        "Team", ["BLACK", "RED"])
+        "Màu quân", ["BLACK", "RED"])
+        
 
-    bot_another_property = InputBox(165, 210, 40, 30, pygame.font.SysFont(
-        None, 25), "Black", "Red", "Depth/Time allowed")
+    bot_another_property = InputBox(165, 210, 40, 30, resource.get_font(26, 0),
+                                     "Black", "Red", "Độ sâu cho chép")
 
     start_button = Button(image=pygame.image.load("resources/button/normal_rect.png"), pos=(330.5, 430),
-                          text_input="Simulate", font=resources.get_font(40, 0), base_color="#AB001B", hovering_color="Black")
+                          text_input="Bắt đầu", font=resource.get_font(40, 0), base_color="#AB001B", hovering_color="Black")
 
     quit_button = Button(image=pygame.image.load("resources/button/small_rect.png"), pos=(165, 530),
-                         text_input="QUIT", font=resources.get_font(30, 0), base_color="Black", hovering_color="#AB001B")
+                         text_input="Thoát", font=resource.get_font(30, 0), base_color="Black", hovering_color="#AB001B")
 
     back_button = Button(image=pygame.image.load("resources/button/small_rect.png"), pos=(495, 530),
-                         text_input="BACK", font=resources.get_font(30, 0), base_color="Black", hovering_color="#AB001B")
+                         text_input="Trở lại", font=resource.get_font(30, 0), base_color="Black", hovering_color="#AB001B")
     
         # Start the game loop
     while True:
@@ -551,27 +552,27 @@ def pve_menu() -> None:
 
         # Draw
         # .Background
-        bg_img, bg_pos = resources.background()
+        bg_img, bg_pos = resource.background()
         SCREEN.blit(bg_img, bg_pos)
 
         # .Text
-        menu_text = resources.get_font(70, 0).render("PvE Menu", True, "Black")
+        menu_text = resource.get_font(70, 0).render("Nhập cuộc", True, "Black")
         menu_rect = menu_text.get_rect(center=(330.5, 60))
         SCREEN.blit(menu_text, menu_rect)
 
-        text = resources.get_font(50, 0).render("Bot select", True, "Black")
+        text = resource.get_font(50, 0).render("Chọn Bot", True, "Black")
         rect = text.get_rect(center=(165, 165))
         SCREEN.blit(text, rect)
 
-        text = resources.get_font(30, 0).render("Bot type", True, "Black")
+        text = resource.get_font(30, 0).render("Bot", True, "Black")
         rect = text.get_rect(center=(70, 250))
         SCREEN.blit(text, rect)
 
-        text = resources.get_font(30, 0).render("Value pack", True, "Black")
+        text = resource.get_font(30, 0).render("Cấp độ", True, "Black")
         rect = text.get_rect(center=(230, 250))
         SCREEN.blit(text, rect)
 
-        text = resources.get_font(50, 0).render("Team Select", True, "Black")
+        text = resource.get_font(58, 0).render("Quân", True, "Black")
         rect = text.get_rect(center=(495, 165))
         SCREEN.blit(text, rect)
 
@@ -603,19 +604,13 @@ def pve_menu() -> None:
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if start_button.check_for_input(mouse_pos):
                     if (
-                        bot_type.main == "Type"
-                        or bot_value.main == "Pack"
-                        or team_select.main == "Team"
+                        bot_type.main == "Kiểu Bot"
+                        or bot_value.main == "Cấp độ"
+                        or team_select.main == "Quân"
                         or not bot_another_property.text.isnumeric()
                     ):
                         continue
 
-                    pve_screen(
-                        str_to_type(bot_type.main),
-                        int(bot_value.main),
-                        int(bot_another_property.text),
-                        Team[team_select.main]
-                    )
                 
                 if quit_button.check_for_input(mouse_pos):
                     pygame.quit()
