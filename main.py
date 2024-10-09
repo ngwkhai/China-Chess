@@ -1,5 +1,6 @@
 import sys
 from time import time
+import threading
 import pygame
 import resource
 from game_state import GameState
@@ -8,8 +9,11 @@ from team import Team
 from cmath import inf
 from gui_utilities import Button, InputBox, DropDown
 from game_tree import GameTree, GameTreeMinimax
+from piece import Piece
 
 # Tạo các biến toàn cục
+# chứa nước đi và giá trị trạng thái trò chơi được giải quyết trong chuỗi chạy bot
+moves_queue, value_queue = list(), list()
 # Biến kết quả của eve module
 winner = dict()
 # Biến toàn cục để điều khiển trò chơi
@@ -48,7 +52,7 @@ def draw_gamestate(game_state: GameState, inverse: bool = False) -> None:
     # Vẽ quân cờ
     for x in range(GameState.BOARD_SIZE_X):
         for y in range(GameState.BOARD_SIZE_Y):
-            notation = game_state.board[x, y]
+            notation = game_state.board[x][y]
 
             # Bỏ qua nếu không có quân nào ở vị trí
             if notation == "NN":
@@ -63,6 +67,9 @@ def draw_gamestate(game_state: GameState, inverse: bool = False) -> None:
             # Vẽ quân cờ
             piece_img, piece_position = resource.piece_sprite(piece)
             SCREEN.blit(piece_img, piece_position)
+
+def bot_run():
+    return
 
 def simulation_screen(
         red_type: str,
@@ -111,10 +118,10 @@ def simulation_screen(
     # Tạo các biến cần thiết
     global is_end, force_end, winner
     winner = {"BLACK" : 0, "DRAW" : 0, "RED" : 0}
-    is_end, force_end = True, False
+    is_end, is_paused = True, False
     check_point = time()
     gamestate, move, bot_run_thread = None, None, None
-    game_done_count = 0
+    games_done_count = 0
     black_win, red_win, draw = 0, 0, 0
 
     # Bắt đầu
@@ -126,12 +133,52 @@ def simulation_screen(
         mouse_pos = pygame.mouse.get_pos()
         events_list = pygame.event.get()
 
+        # Nếu trò chơi không bị tạm dừng thì cập nhật bảng
+        if is_paused is False:
+            if is_end is True and len(moves_queue) == 0:
+                black_win, red_win, draw = winner["BLACK"], winner["RED"], winner["DRAW"]
+                games_done_count += 1
+
+                # Nếu đã đạt số lần mô phỏng thì dừng
+                if games_done_count > number_of_simulations:
+                    bot_run_thread.join()
+                    break
+
+                # Khôi phục lại các biến
+                value_queue.clear()
+                current_red_value, current_black_value = 0, 0
+                is_end = False
+                move = None
+                gamestate = GameState.generate_initial_game_state()
+
+                if bot_run_thread is not None:
+                    bot_run_thread.join()
+
+                bot_run_thread = threading.Thread(target=bot_run,
+                    args=(red_type, red_value, red_another_property,
+                          black_type, black_value, black_another_property
+                ))
+                bot_run_thread.start()
+
+            # Cố gắng di chuyển
+            try:
+                if time() - check_point > MOVE_TIME:
+                    move = moves_queue.pop(0)
+                    gamestate = gamestate.generate_game_state_with_move(move[0], move[1])[0]
+                    current_red_value, current_black_value = value_queue.pop(0)
+
+                    check_point = time()
+
+            # Nếu bot chưa thực hiện nước đi nào thì vượt qua
+            except IndexError:
+                pass
+
         # Làm sạch làm hình
         SCREEN.fill((241, 203, 157))
 
         # Vẽ
         # Trạng thái trò chơi
-        # draw_gamestate(gamestate)
+        draw_gamestate(gamestate)
 
         if move is not None:
             chosen_ring_img, draw_pos = resource.chosen_ring_sprite(move[0])
