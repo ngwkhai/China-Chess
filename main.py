@@ -1,5 +1,6 @@
 import sys
-
+from time import time
+import threading
 import pygame
 import resource
 from game_state import GameState
@@ -7,6 +8,16 @@ from game_tree import GameTree
 from team import Team
 from cmath import inf
 from gui_utilities import Button, InputBox, DropDown
+from game_tree import GameTree, GameTreeMinimax
+from piece import Piece
+
+# Tạo các biến toàn cục
+# chứa nước đi và giá trị trạng thái trò chơi được giải quyết trong chuỗi chạy bot
+moves_queue, value_queue = list(), list()
+# Biến kết quả của eve module
+winner = dict()
+# Biến toàn cục để điều khiển trò chơi
+is_end, force_end = False, False
 
 # Khởi tạo pygame
 pygame.init()
@@ -21,6 +32,199 @@ REFRESH_RATE = 30
 
 # Tạo đối tượng đồng hồ
 clock = pygame.time.Clock()
+
+# Bắt đầu hàm chính
+def str_to_type(type_str: str) -> GameTree:
+    """Hàm này trả về loại cây trò chơi tương ứng với chuỗi đầu vào"""
+    if type_str == 'Minimax':
+        return GameTreeMinimax
+    elif type_str == 'MCTS':
+        pass
+        return GameTreeMCTS
+
+def draw_gamestate(game_state: GameState, inverse: bool = False) -> None:
+    """Hàm vẽ trạng thái trò chơi"""
+
+    # Vẽ bàn cờ
+    board_img, board_position = resource.board_sprite()
+    SCREEN.blit(board_img, board_position)
+
+    # Vẽ quân cờ
+    for x in range(GameState.BOARD_SIZE_X):
+        for y in range(GameState.BOARD_SIZE_Y):
+            notation = game_state.board[x][y]
+
+            # Bỏ qua nếu không có quân nào ở vị trí
+            if notation == "NN":
+                continue
+
+            # Tạo một thực thể quân cờ
+            piece = Piece.create_instance(
+                (abs(x - int(inverse) * 9), y),
+                notation, game_state.board, None, None
+            )
+
+            # Vẽ quân cờ
+            piece_img, piece_position = resource.piece_sprite(piece)
+            SCREEN.blit(piece_img, piece_position)
+
+def bot_run():
+    return
+
+def simulation_screen(
+        red_type: str,
+        red_value: str,
+        red_another_property: str,
+        black_type: str,
+        black_value: str,
+        black_another_property: str,
+        number_of_simulations: str
+) -> None:
+    """Đây là hàm mô phỏng màn hình"""
+    def get_bot_full_type(bot_type, bot_property, bot_value):
+        """Hàm này dùng để lấy tên đầy đủ của bot
+        được sử dụng cho màn hình kết quả"""
+        res = bot_type + ' '
+
+        if bot_type == "Minimax":
+            res += 'Độ sâu ' + bot_property + ' '
+        elif bot_type == "MCTS":
+            res += 'Thời gian ' + bot_property + 's '
+
+        res += 'Cấp độ ' + bot_value
+        return res
+
+    # Thay đổi chuỗi thành kiểu thích hợp
+    red_full_type = get_bot_full_type(red_type, red_another_property, red_value)
+    black_full_type = get_bot_full_type(black_type, black_another_property, black_value)
+
+    red_type, black_type = str_to_type(red_type), str_to_type(black_type)
+    red_value, black_value = int(red_value), int(black_value)
+
+    red_another_property = int(red_another_property)
+    black_another_property = int(black_another_property)
+    number_of_simulations = int(number_of_simulations)
+
+    # Tạo các nút
+    pause_button = Button(image=pygame.image.load("resources/button/normal_rect.png"), pos=(756, 450),
+                          text_input="Hoãn", font=resource.get_font(40, 0), base_color="#AB001B", hovering_color="Black")
+    skip_button = Button(image=pygame.image.load("resources/button/normal_rect.png"), pos=(756, 550),
+                          text_input="Dừng", font=resource.get_font(40, 0), base_color="#AB001B", hovering_color="Black")
+
+    # Mở rộng kích thước của màn hình
+    SCREEN = pygame.display.set_mode((900, 664))
+    MOVE_TIME = 0.5
+
+    # Tạo các biến cần thiết
+    global is_end, force_end, winner
+    winner = {"BLACK" : 0, "DRAW" : 0, "RED" : 0}
+    is_end, is_paused = True, False
+    check_point = time()
+    gamestate, move, bot_run_thread = None, None, None
+    games_done_count = 0
+    black_win, red_win, draw = 0, 0, 0
+
+    # Bắt đầu
+    start = time()
+
+    # Bắt đầu vòng lặp trò chơi
+    while True:
+        # Lấy trạng thái gama hiện tại
+        mouse_pos = pygame.mouse.get_pos()
+        events_list = pygame.event.get()
+
+        # Nếu trò chơi không bị tạm dừng thì cập nhật bảng
+        if is_paused is False:
+            if is_end is True and len(moves_queue) == 0:
+                black_win, red_win, draw = winner["BLACK"], winner["RED"], winner["DRAW"]
+                games_done_count += 1
+
+                # Nếu đã đạt số lần mô phỏng thì dừng
+                if games_done_count > number_of_simulations:
+                    bot_run_thread.join()
+                    break
+
+                # Khôi phục lại các biến
+                value_queue.clear()
+                current_red_value, current_black_value = 0, 0
+                is_end = False
+                move = None
+                gamestate = GameState.generate_initial_game_state()
+
+                if bot_run_thread is not None:
+                    bot_run_thread.join()
+
+                bot_run_thread = threading.Thread(target=bot_run,
+                    args=(red_type, red_value, red_another_property,
+                          black_type, black_value, black_another_property
+                ))
+                bot_run_thread.start()
+
+            # Cố gắng di chuyển
+            try:
+                if time() - check_point > MOVE_TIME:
+                    move = moves_queue.pop(0)
+                    gamestate = gamestate.generate_game_state_with_move(move[0], move[1])[0]
+                    current_red_value, current_black_value = value_queue.pop(0)
+
+                    check_point = time()
+
+            # Nếu bot chưa thực hiện nước đi nào thì vượt qua
+            except IndexError:
+                pass
+
+        # Làm sạch làm hình
+        SCREEN.fill((241, 203, 157))
+
+        # Vẽ
+        # Trạng thái trò chơi
+        draw_gamestate(gamestate)
+
+        if move is not None:
+            chosen_ring_img, draw_pos = resource.chosen_ring_sprite(move[0])
+            SCREEN.blit(chosen_ring_img, draw_pos)
+
+            chosen_ring_img, draw_pos = resource.chosen_ring_sprite(move[1])
+            SCREEN.blit(chosen_ring_img, draw_pos)
+
+        # Vẽ nút
+        for button in [pause_button, skip_button]:
+            button.draw(SCREEN)
+
+        # Chữ
+        pygame.draw.rect(SCREEN, "#AB001B", pygame.Rect(658, 18, 208, 79))
+        pygame.draw.rect(SCREEN, "#F6F5E0", pygame.Rect(662, 22, 200, 71))
+        text = resource.get_font(25, 0).render("Đen " + str(black_win), True, "Black")
+        SCREEN.blit(text, (670, 30))
+
+        text = resource.get_font(25, 0).render("Đỏ " + str(red_win), True, "Red")
+        SCREEN.blit(text, (790, 30))
+
+        text = resource.get_font(25, 0).render("Số nước " + str(draw), True, "#56000E")
+        SCREEN.blit(text, (730, 60))
+
+        pygame.draw.rect(SCREEN, "#AB001B", pygame.Rect(658, 110, 208, 109))
+        pygame.draw.rect(SCREEN, "#F6F5E0", pygame.Rect(662, 114, 200, 101))
+
+        text = resource.get_font(25, 0).render("Thống kê", True, "#56000E")
+        SCREEN.blit(text, (730, 118))
+
+        # text = resource.get_font(25, 0).render(
+        #     "Black        "+ str(round(float(current_black_value), 2)), True, "Black")
+        # SCREEN.blit(text, (670, 148))
+        #
+        # text = resource.get_font(25, 0).render(
+        #     "Red          " + str(round(float(current_red_value), 2)), True, "Red")
+        # SCREEN.blit(text, (670, 178))
+
+        pygame.draw.rect(SCREEN, "#AB001B", pygame.Rect(658, 240, 208, 92))
+        pygame.draw.rect(SCREEN, "#F6F5E0", pygame.Rect(662, 244, 200, 84))
+
+        # Cập nhật mà hình
+        pygame.display.flip()
+
+        # Thời gian đợi khung hình tiếp theo
+        clock.tick(REFRESH_RATE)
 
 def eve_menu():
     # Tạo một số tiện ích
@@ -143,6 +347,11 @@ def eve_menu():
                         or not red_another_property.text.isnumeric()
                     ):
                         continue
+                    simulation_screen(
+                        red_type.main, red_value.main, red_another_property.text,
+                        black_type.main, black_value.main, black_another_property.text,
+                        num_box.text
+                    )
 
                 if quit_button.check_for_input(mouse_pos):
                     pygame.quit()

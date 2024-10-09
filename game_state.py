@@ -240,8 +240,8 @@ class GameState:
 
         return None
     @staticmethod
-    def hash_board(self, board: list) -> str:
-        """Phương thức trả về mã hash của bàn cờ"""
+    def hash_board(board: list) -> str:
+        """Phương thức tr ả về mã hash của bàn cờ"""
         return "".join([str(piece) for row in board for piece in row])
 
     @classmethod

@@ -1,6 +1,5 @@
 """Mô-đun dùng để tạo lớp Node và lớp con của nó"""
 from abc import ABC, abstractmethod
-from turtledemo.penrose import inflatedart
 from random import choice, shuffle
 from cmath import inf
 from game_state import GameState
