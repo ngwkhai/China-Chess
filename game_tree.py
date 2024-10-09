@@ -4,6 +4,7 @@ from cmath import inf
 
 from node import Node
 from team import Team
+from node import Node, NodeMinimax
 
 class GameTree(ABC):
     """Lớp này chịu trách nhiệm về việc biểu diễn cây trò chơi"""
@@ -53,3 +54,30 @@ class GameTree(ABC):
     def _create_node(self, game_state, parent, parent_move) -> Node:
         """Phương thức này trả về một nút mới trong cây"""
         pass
+
+class GameTreeMinimax(GameTree):
+    """Lớp này chịu trách nhiệm về cây trò chơi minimax"""
+    def __init__(self, team, target_depth, value_pack: int = 0) -> None:
+        super().__init__(team, value_pack)
+        self.target_depth = target_depth
+
+    # Phương thức riêng
+    def _create_node(self, game_state, parent, parent_move) -> NodeMinimax:
+        """Phương thức tạo nút minimax"""
+        return NodeMinimax(game_state, parent, parent_move)
+
+    # Phương thức thực thể
+    def process(self, moves_queue) -> tuple:
+        """Cho bot chạy"""
+        # Bắt đầu bộ đếm thời gian
+        start = time()
+        self.current_node.minimax(self.target_depth, self.team is Team.RED)
+        old_pos, new_pos = self.move_to_best_child()
+        moves_queue.append((old_pos, new_pos))
+
+        print(self.current_node.minimax_value)
+        self.count = 0
+        end = time()  # Kết thúc bộ đếm
+        print("Time: {:.2f} s".format(end - start))
+        print("{} moves: {} -> {}".format(self.team.name, old_pos, new_pos))
+        return old_pos, new_pos

@@ -7,6 +7,7 @@ from game_tree import GameTree
 from team import Team
 from cmath import inf
 from gui_utilities import Button, InputBox, DropDown
+from game_tree import GameTree, GameTreeMinimax
 
 # Tạo các biến toàn cục
 # Biến kết quả của eve module
@@ -63,7 +64,7 @@ def simulation_screen(
     red_full_type = get_bot_full_type(red_type, red_another_property, red_value)
     black_full_type = get_bot_full_type(black_type, black_another_property, black_value)
 
-    # red_type, black_type = str_to_type(red_type), str_to_type(black_type)
+    red_type, black_type = str_to_type(red_type), str_to_type(black_type)
     red_value, black_value = int(red_value), int(black_value)
 
     red_another_property = int(red_another_property)
