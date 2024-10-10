@@ -1,6 +1,7 @@
 """Mô-đun dùng để tạo lớp GameTree và các lớp con của nó"""
 from abc import ABC
 from cmath import inf
+from time import time
 
 from node import Node
 from team import Team
@@ -26,7 +27,7 @@ class GameTree(ABC):
     # Phương thức cơ bản
     def move_to_best_child(self) ->tuple:
         """Phương thức này di chuyển nút hiện tại tới "con tốt nhất" của nó trên cây trò chơi"""
-        self.current_node = self.current_node_best_move()
+        self.current_node = self.current_node.best_move()
         self.current_node.parent = None
         return self.current_node.parent_move
 

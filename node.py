@@ -124,7 +124,7 @@ class NodeMinimax(Node):
 
     def _create_node(self, game_state: GameState, parent, parent_move: tuple):
         """Phương thức tạo nút minimax mới"""
-        return Node(game_state, parent, parent_move)
+        return NodeMinimax(game_state, parent, parent_move)
 
     def best_move(self):
         """Phương thức trả về nút con tốt nhất của nút hiện tại"""

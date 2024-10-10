@@ -481,15 +481,15 @@ def pve_screen(
 
         # Chọn
         if position_chosen is not None:
-            chosen_ring_img, draw_pos = resources.chosen_ring_sprite(position_chosen)
+            chosen_ring_img, draw_pos = resource.chosen_ring_sprite(position_chosen)
             SCREEN.blit(chosen_ring_img, draw_pos)
 
         # Hiển thị hình ảnh của các vòng tròn tương ứng với nước đi cuối cùng
         if last_move is not None:
-            chosen_ring_img, draw_pos = resources.chosen_ring_sprite(last_move[0], player_team is Team.BLACK)
+            chosen_ring_img, draw_pos = resource.chosen_ring_sprite(last_move[0], player_team is Team.BLACK)
             SCREEN.blit(chosen_ring_img, draw_pos)
 
-            chosen_ring_img, draw_pos = resources.chosen_ring_sprite(last_move[1], player_team is Team.BLACK)
+            chosen_ring_img, draw_pos = resource.chosen_ring_sprite(last_move[1], player_team is Team.BLACK)
             SCREEN.blit(chosen_ring_img, draw_pos)
 
         # Nếu trò chơi kết thúc, hãy rút thông báo và nhấn nút
@@ -516,8 +516,8 @@ def pve_screen(
                 for event in events_list:
                     if event.type == pygame.MOUSEBUTTONDOWN:
                         # Tính toán vị trí nhấp chuột trong UI, vị trí nhấp chuột trong bảng trạng thái trò chơi
-                        click_pos = resources.get_piece_position(mouse_pos)
-                        board_pos = resources.get_piece_position(mouse_pos, player_team is Team.BLACK)
+                        click_pos = resource.get_piece_position(mouse_pos)
+                        board_pos = resource.get_piece_position(mouse_pos, player_team is Team.BLACK)
 
                        # Nếu vị trí nhấp chuột nằm ngoài bảng hoặc trên quân cờ đã chọn => bỏ chọn quân cờ
                         if click_pos is None or click_pos == position_chosen:
