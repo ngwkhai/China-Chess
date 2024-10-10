@@ -283,7 +283,7 @@ def eve_menu():
         SCREEN.blit(bg_img, bg_pos)
 
         # Vẽ chữ
-        menu_text = resource.get_font(70, 0).render("Chọn Bots", True, "Black")
+        menu_text = resource.get_font(70, 0).render("Nhập cuộc", True, "Black")
         menu_rect = menu_text.get_rect(center=(330.5, 60))
         SCREEN.blit(menu_text, menu_rect)
 
@@ -446,10 +446,10 @@ def pve_screen(
 
     #
     quit_button = Button(image=pygame.image.load("resources/button/small_rect.png"), pos=(165, 530),
-                         text_input="QUIT", font=resource.get_font(30, 0), base_color="Black", hovering_color="#AB001B")
+                         text_input="Thoát", font=resource.get_font(30, 0), base_color="Black", hovering_color="#AB001B")
 
     back_button = Button(image=pygame.image.load("resources/button/small_rect.png"), pos=(495, 530),
-                         text_input="BACK", font=resource.get_font(30, 0), base_color="Black", hovering_color="#AB001B")
+                         text_input="Trở lại", font=resource.get_font(30, 0), base_color="Black", hovering_color="#AB001B")
 
     # Bắt đầu vòng lặp cho trò chơi
     while True:
@@ -686,7 +686,13 @@ def pve_menu():
                     ):
                         continue
 
-                
+                    pve_screen(
+                            str_to_type(bot_type.main),
+                            int(bot_value.main),
+                            int(bot_another_property.text),
+                            Team[team_select.main]
+                        )
+                    
                 if quit_button.check_for_input(mouse_pos):
                     pygame.quit()
                     sys.exit()
@@ -726,7 +732,7 @@ def pvp_menu():
         bg_img, bg_pos = resource.background()
         SCREEN.blit(bg_img, bg_pos)
 
-        menu_text = resource.get_font(70, 0).render("Chuẩn bị", True, "Black")
+        menu_text = resource.get_font(70, 0).render("Nhập cuộc", True, "Black")
         menu_rect = menu_text.get_rect(center=(330.5, 60))
         SCREEN.blit(menu_text, menu_rect)
 

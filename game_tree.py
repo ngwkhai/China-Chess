@@ -5,6 +5,7 @@ from cmath import inf
 from node import Node
 from team import Team
 from node import Node, NodeMinimax
+from game_state import GameState
 
 class GameTree(ABC):
     """Lớp này chịu trách nhiệm về việc biểu diễn cây trò chơi"""
