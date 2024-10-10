@@ -219,26 +219,49 @@ class GameState:
         return game_states_available
 
     def get_team_win(self):
-        """Phương thức trả về đội chiến thắng, nếu có"""
+        """Phương thức trả về đội thắng cuộc trong trạng thái trò chơi"""
 
-        generals_pos = dict()
-
-        # Lặp qua tất cả các vị trí trên bàn cờ
+        # Nếu tất cả các quân cờ của một đội bị tiêu diệt, đội kia thắng
         for i in range(self.BOARD_SIZE_X):
             for j in range(self.BOARD_SIZE_Y):
-                # Tìm vị trí của hai tướng (General)
-                if self.board[i][j][1] == "G":
-                    generals_pos[Team[self.board[i][j][0]]] = (i, j)
+                notation = self.board[i][j]
+                if notation == "NN":
+                    continue
 
-        # Nếu tướng đen không tồn tại, đội đỏ thắng
-        if Team.BLACK not in generals_pos:
-            return Team.RED
+                if Team[notation[0]] is self._current_team:
+                    moves_list = Piece.create_instance(
+                        (i, j),
+                        notation,
+                        self.board,
+                        self.number_of_black_pieces + self.number_of_red_pieces,
+                        self._get_number_of_team_pieces(Team[notation[0]]),
+                    ).admissible_moves
 
-        # Nếu tướng đỏ không tồn tại, đội đen thắng
-        if Team.RED not in generals_pos:
-            return Team.BLACK
+                    old_pos = (i, j)
+                    for new_pos in moves_list:
+                        old_pos_notation = self.board[old_pos[0]][old_pos[1]]
+                        new_pos_notation = self.board[new_pos[0]][new_pos[1]]
 
-        return None
+                        self.board[old_pos[0]][old_pos[1]] = "NN"
+                        self.board[new_pos[0]][new_pos[1]] = old_pos_notation
+
+                        if (
+                                General.is_general_exposed(
+                                    self.board,
+                                    self._current_team,
+                                    self._get_the_opponent_team(),
+                                )
+                                is False
+                        ):
+                            self.board[old_pos[0]][old_pos[1]] = old_pos_notation
+                            self.board[new_pos[0]][new_pos[1]] = new_pos_notation
+                            return Team.NONE
+
+                        self.board[old_pos[0]][old_pos[1]] = old_pos_notation
+                        self.board[new_pos[0]][new_pos[1]] = new_pos_notation
+
+        # Trả về đội đối thủ nếu đội hiện tại không thể di chuyển
+        return self._get_the_opponent_team()
     @staticmethod
     def hash_board(board: list) -> str:
         """Phương thức tr ả về mã hash của bàn cờ"""
