@@ -133,6 +133,26 @@ def simulation_screen(
         mouse_pos = pygame.mouse.get_pos()
         events_list = pygame.event.get()
 
+        # Xử lý sự kiên bấm
+        for event in events_list:
+            # Thoát trò chơi nếu bấm x
+            if event.type == pygame.QUIT:
+                force_end = True
+                pygame.quit()
+                sys.exit()
+
+            #  Xử lý việc bấm vào các nút
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if pause_button.check_for_input(mouse_pos):
+                    is_paused = not is_paused
+                elif skip_button.check_for_input(mouse_pos):
+                    is_paused = False
+                    force_end = True
+                    is_end = True
+                    bot_run_thread.join()
+                    moves_queue.clear()
+                    value_queue.clear()
+
         # Nếu trò chơi không bị tạm dừng thì cập nhật bảng
         if is_paused is False:
             if is_end is True and len(moves_queue) == 0:
@@ -209,22 +229,63 @@ def simulation_screen(
         text = resource.get_font(25, 0).render("Thống kê", True, "#56000E")
         SCREEN.blit(text, (730, 118))
 
-        # text = resource.get_font(25, 0).render(
-        #     "Black        "+ str(round(float(current_black_value), 2)), True, "Black")
-        # SCREEN.blit(text, (670, 148))
-        #
-        # text = resource.get_font(25, 0).render(
-        #     "Red          " + str(round(float(current_red_value), 2)), True, "Red")
-        # SCREEN.blit(text, (670, 178))
+        text = resource.get_font(25, 0).render(
+            "Black        "+ str(round(float(current_black_value), 2)), True, "Black")
+        SCREEN.blit(text, (670, 148))
+
+        text = resource.get_font(25, 0).render(
+            "Red          " + str(round(float(current_red_value), 2)), True, "Red")
+        SCREEN.blit(text, (670, 178))
 
         pygame.draw.rect(SCREEN, "#AB001B", pygame.Rect(658, 240, 208, 92))
         pygame.draw.rect(SCREEN, "#F6F5E0", pygame.Rect(662, 244, 200, 84))
+
+        # Trạng thái quân cờ
+        piece_position = resource.get_piece_position(mouse_pos)
+        if piece_position is not None:
+            notation = gamestate.board[piece_position[0]][piece_position[1]]
+            if notation != "NN":
+                if Team[notation[0]] is Team.RED:
+                    number_of_team_piece = gamestate.number_of_red_pieces
+                else:
+                    number_of_team_piece = gamestate.number_of_black_pieces
+
+                piece = Piece.create_instance(
+                    piece_position, notation, gamestate.board,
+                    gamestate.number_of_black_pieces + gamestate.number_of_red_pieces,
+                    number_of_team_piece
+                )
+
+                text = resource.get_font(26, 0).render(
+                    "Kiểu quân: " + piece._piece_type.capitalize(), True, "#56000E"
+                )
+                SCREEN.blit(text, (670, 250))
+
+                text = resource.get_font(26, 0).render(
+                    "Đội quân: " + str(piece.team).capitalize(), True, "#56000E")
+                SCREEN.blit(text, (670, 275))
+
+                if piece.team is Team.RED:
+                    text = resource.get_font(26, 0).render(
+                        "Giá trị quân: " + str(round(piece.piece_value(red_value), 2)), True, "#56000E")
+                else:
+                    text = resource.get_font(26, 0).render(
+                        "Giá tri quân: " + str(round(piece.piece_value(black_value), 2)), True, "#56000E")
+                SCREEN.blit(text, (670, 300))
 
         # Cập nhật mà hình
         pygame.display.flip()
 
         # Thời gian đợi khung hình tiếp theo
         clock.tick(REFRESH_RATE)
+
+    # Kết thúc xử lý
+    print(winner)
+    end = time()
+    print("Tổng thời gian: {} s\n".format(end - start))
+
+    # Di chuyển đến màn hình kết quả
+    # eve_reslt(red_full_type, black_full_type)
 
 def eve_menu():
     # Tạo một số tiện ích
@@ -774,7 +835,8 @@ def pvp_menu():
                 # Trò chơi sẽ bắt đầu
                 if start_button.check_for_input(mouse_pos):
                     if not num_box.text.isnumeric():
-                        pvp_screen()
+                        continue
+                    pvp_screen()
 
                 if quit_button.check_for_input(mouse_pos):
                     pygame.quit()
