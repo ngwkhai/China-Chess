@@ -4,11 +4,10 @@ import threading
 import pygame
 import resource
 from game_state import GameState
-from game_tree import GameTree
 from team import Team
 from cmath import inf
 from gui_utilities import Button, InputBox, DropDown
-from game_tree import GameTree, GameTreeMinimax
+from game_tree import GameTree, GameTreeMinimax, GameTreeDynamicMinimax, GameTreeDeepeningMinimax
 from piece import Piece
 
 # Tạo các biến toàn cục
@@ -38,8 +37,10 @@ def str_to_type(type_str: str) -> GameTree:
     """Hàm này trả về loại cây trò chơi tương ứng với chuỗi đầu vào"""
     if type_str == 'Minimax':
         return GameTreeMinimax
-    elif type_str == 'MCTS':
-        pass
+    elif type_str == 'DyMinimax':
+        return GameTreeDynamicMinimax
+    elif type_str == 'DeepMinimax':
+        return GameTreeDeepeningMinimax
         
 
 def draw_gamestate(game_state: GameState, inverse: bool = False) -> None:
@@ -86,10 +87,11 @@ def simulation_screen(
         được sử dụng cho màn hình kết quả"""
         res = bot_type + ' '
 
-        if bot_type == "Minimax":
+        if (bot_type == "Minimax"
+            or bot_type == "DyMinimax"
+            or bot_type == "DeepMinimax"
+        ):
             res += 'Độ sâu ' + bot_property + ' '
-        elif bot_type == "MCTS":
-            res += 'Thời gian ' + bot_property + 's '
 
         res += 'Cấp độ ' + bot_value
         return res
@@ -293,28 +295,28 @@ def eve_menu():
         ["#000000", "#202020"],
         ["#404040", "#606060"],
         20, 290, 100, 30,
-        resource.get_font(26, 0),
-        "Bot", ["Minimax", "MCTS"]
+        resource.get_font(24, 0),
+        "Bot", ["Minimax", "DyMinimax", "DeepMinimax"]
     )
     black_value = DropDown(
         ["#000000", "#202020"],
         ["#404040", "#606060"],
         180, 290, 100, 30,
-        resource.get_font(26, 0),
+        resource.get_font(24, 0),
         "Cấp độ", ["0", "1", "2"]
     )
     red_type = DropDown(
         ["#DC1C13", "#EA4C46"],
         ["#F07470", "#F1959B"],
         350, 290, 100, 30,
-        resource.get_font(26, 0),
-        "Bot", ["Minimax", "MCTS"]
+        resource.get_font(24, 0),
+        "Bot", ["Minimax", "DyMinimax", "DeepMinimax"]
     )
     red_value = DropDown(
         ["#DC1C13", "#EA4C46"],
         ["#F07470", "#F1959B"],
         510, 290, 100, 30,
-        resource.get_font(26, 0),
+        resource.get_font(24, 0),
         "Cấp độ", ["0", "1", "2"]
     )
 
@@ -650,21 +652,21 @@ def pve_menu():
         ["#000000", "#202020"],
         ["#404040", "#606060"],
         20, 270, 100, 30,
-        resource.get_font(26, 0),
-        "Kiểu Bot", ["Minimax", "MCTS"]) # Chọn thuật toán
+        resource.get_font(24, 0),
+        "Kiểu Bot", ["Minimax", "DyMinimax", "DeepMinimax"]) # Chọn thuật toán
 
     bot_value = DropDown(
         ["#000000", "#202020"],
         ["#404040", "#606060"],
         180, 270, 100, 30,
-        resource.get_font(26, 0),
+        resource.get_font(24, 0),
         "Cấp độ", ["0", "1", "2"])
 
     team_select = DropDown(
         ["#000000", "#202020"],
         ["#404040", "#606060"],
         430, 220, 150, 50,
-        pygame.font.SysFont(None, 30),
+        resource.get_font(30, 0),
         "Màu quân", ["BLACK", "RED"])
         
 
@@ -746,13 +748,12 @@ def pve_menu():
                         or not bot_another_property.text.isnumeric()
                     ):
                         continue
-
                     pve_screen(
                             str_to_type(bot_type.main),
                             int(bot_value.main),
                             int(bot_another_property.text),
                             Team[team_select.main]
-                        )
+                    )
                     
                 if quit_button.check_for_input(mouse_pos):
                     pygame.quit()
@@ -862,10 +863,10 @@ def pvp_screen() -> None:
 
     # Tạo các nút
     quit_button = Button(image=pygame.image.load("resources/button/small_rect.png"), pos=(165, 530),
-                         text_input="QUIT", font=resource.get_font(30, 0), base_color="Black", hovering_color="#AB001B")
+                         text_input="Thoát", font=resource.get_font(30, 0), base_color="Black", hovering_color="#AB001B")
 
     back_button = Button(image=pygame.image.load("resources/button/small_rect.png"), pos=(495, 530),
-                         text_input="BACK", font=resource.get_font(30, 0), base_color="Black", hovering_color="#AB001B")
+                         text_input="Trở lại", font=resource.get_font(30, 0), base_color="Black", hovering_color="#AB001B")
 
     # Bắt đầu vòng lặp cho trò chơi
     while True:
