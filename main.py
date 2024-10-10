@@ -774,7 +774,7 @@ def pvp_menu():
                 # Trò chơi sẽ bắt đầu
                 if start_button.check_for_input(mouse_pos):
                     if not num_box.text.isnumeric():
-                        continue
+                        pvp_screen()
 
                 if quit_button.check_for_input(mouse_pos):
                     pygame.quit()
