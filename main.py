@@ -70,6 +70,97 @@ def draw_gamestate(game_state: GameState, inverse: bool = False) -> None:
             piece_img, piece_position = resource.piece_sprite(piece)
             SCREEN.blit(piece_img, piece_position)
 
+def eve_result(red_type: str, black_type: str) -> None:
+    """Hàm trả về kết quả eve trên màn hình"""
+
+    # Thiết lập màn  hình chuẩn
+    SCREEN = pygame.display.set_mode((661, 660))
+
+    # Lấy biến toàn cục
+    global winner
+
+    # Tạo các nút
+    quit_button = Button(image=pygame.image.load("resources/button/small_rect.png"), pos=(165, 550),
+                         text_input="Thoát", font=resource.get_font(30, 0), base_color="Black", hovering_color="#AB001B")
+
+    back_button = Button(image=pygame.image.load("resources/button/small_rect.png"), pos=(495, 550),
+                         text_input="Trở lại", font=resource.get_font(30, 0), base_color="Black", hovering_color="#AB001B")
+
+    # Bắt đầu vòng lặp trò chơi
+    while True:
+        # Lấy trạng thái trò chơi hiện tại
+        mouse_pos = pygame.mouse.get_pos()
+        events_list = pygame.event.get()
+
+        # Vẽ màn hình chính
+        # Vẽ nền
+        bg_img, bg_pos = resource.background()
+        SCREEN.blit(bg_img, bg_pos)
+
+        # Viết chữ
+        text = resource.get_font(70, 0).render("Kết quả", True, "Black")
+        rect = text.get_rect(center=(330.5, 60))
+        SCREEN.blit(text, rect)
+
+        text = resource.get_font(60, 0).render("Black", True, "Black")
+        rect = text.get_rect(center=(145, 185))
+        SCREEN.blit(text, rect)
+
+        text = resource.get_font(12, 2).render(black_type, True, "Black")
+        rect = text.get_rect(center=(145, 220))
+        SCREEN.blit(text, rect)
+
+        text = resource.get_font(60, 0).render(str(winner.get("BLACK", 0)), True, "Black")
+        rect = text.get_rect(center=(145, 280))
+        SCREEN.blit(text, rect)
+
+        text = resource.get_font(12, 2).render(red_type, True, "#AB001B")
+        rect = text.get_rect(center=(515, 220))
+        SCREEN.blit(text, rect)
+
+        text = resource.get_font(60, 0).render("Red", True, "#AB001B")
+        rect = text.get_rect(center=(515, 185))
+        SCREEN.blit(text, rect)
+
+        text = resource.get_font(60, 0).render(str(winner.get("RED", 0)), True, "#AB001B")
+        rect = text.get_rect(center=(515, 280))
+        SCREEN.blit(text, rect)
+
+        text = resource.get_font(60, 0).render("Draw", True, "#56000E")
+        rect = text.get_rect(center=(330.5, 185))
+        SCREEN.blit(text, rect)
+
+        text = resource.get_font(60, 0).render(str(winner.get("DRAW", 0)), True, "#56000E")
+        rect = text.get_rect(center=(330.5, 280))
+        SCREEN.blit(text, rect)
+
+        # Vẽ nút
+        for button in [quit_button, back_button]:
+            button.draw(SCREEN)
+
+        # Xử lý sự kiện bấm
+        for event in events_list:
+            # Thoát
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+
+            # Kích vào nút
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if quit_button.check_for_input(mouse_pos):
+                    pygame.quit()
+                    sys.exit()
+                if back_button.check_for_input(mouse_pos):
+                    winner = dict()
+                    eve_menu()
+
+        # Cập nhật màn hình
+        pygame.display.flip()
+
+        # Khung hình
+        clock.tick(REFRESH_RATE)
+
+
 def bot_run(
         althea_type: GameTree,
         althea_value: int,
@@ -335,7 +426,7 @@ def simulation_screen(
     print("Tổng thời gian: {} s\n".format(end - start))
 
     # Di chuyển đến màn hình kết quả
-    # eve_reslt(red_full_type, black_full_type)
+    eve_result(red_full_type, black_full_type)
 
 def eve_menu():
     # Tạo một số tiện ích
