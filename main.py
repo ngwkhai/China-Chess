@@ -1,4 +1,5 @@
 import sys
+import gc
 from time import time
 import threading
 import pygame
@@ -69,8 +70,55 @@ def draw_gamestate(game_state: GameState, inverse: bool = False) -> None:
             piece_img, piece_position = resource.piece_sprite(piece)
             SCREEN.blit(piece_img, piece_position)
 
-def bot_run():
-    return
+def bot_run(
+        althea_type: GameTree,
+        althea_value: int,
+        althea_ap: int,
+        beth_type: GameTree,
+        beth_value: int,
+        beth_ap: int,
+) -> None:
+    """Hàm tạo bot chạy"""
+    # Tạo bot
+    althea = althea_type(Team.RED, althea_ap, althea_value)
+    beth = beth_type(Team.BLACK, beth_ap, beth_value)
+
+    # Thiết lập các biến
+    turn, max_turn = 1, 200
+    global is_end, force_end, winner
+
+    # Bắt đầu vòng lặp trò chơi
+    while turn <= max_turn:
+        # Nếu có tín hiệu buộc kết thúc, hãy ngắt vòng lặp
+        if force_end is True:
+            break
+
+        print("Lượt: {}".format(turn))
+
+        # ALTHEA ĐẾN LƯỢT
+        # Kiểm tra xem Althea đã được chiếu hết chưa
+        if althea.is_lost() is True:
+            if althea.current_node.game_state.get_team_win() is Team.NONE:
+                break
+            winner[beth.team.name] = winner.get(beth.team.name, 0) + 1
+            print("Chiếu tướng! {} thắng!\n".format(beth.team.name))
+            is_end = True
+            return
+
+        # Di chuyển đến lời giải
+        old_pos, new_pos = althea.process(moves_queue)
+        beth.move_to_child_node_with_move(old_pos, new_pos)
+
+        value_queue.append((althea.current_node.game_state.value, beth.current_node.game_state.value))
+        gc.collect()
+        # Kết thúc lượt beth
+
+        turn += 1
+
+    # Nếu vòng lặp trò chơi dừng lại thì vẽ kết quả
+    winner["DRAW"] = winner.get("DRAW", 0) + 1
+    is_end = True
+    print("DRAW")
 
 def simulation_screen(
         red_type: str,
