@@ -5,7 +5,7 @@ import pygame
 # [CONSTANTS]
 ORIGIN_X, ORIGIN_Y = 45, 10 # Toạ độ gốc
 START_X, START_Y = 47, 8
-STEP_X, STEP_Y = 63, 65
+STEP_X, STEP_Y = 65, 65
 PIECE_SIZE = 60 # Kích thước quân cờ
 RESOURCES_PATH = 'resources/'
 # [END CONSTANTS]
