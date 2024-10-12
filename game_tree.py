@@ -3,7 +3,6 @@ from abc import ABC
 from cmath import inf
 from time import time
 
-from node import Node
 from team import Team
 from node import Node, NodeMinimax
 from game_state import GameState

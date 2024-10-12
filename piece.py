@@ -1,3 +1,4 @@
+"""Mô-đun cung cấp thuộc tính của lớp trừu tượng và các thành viên trong nhóm"""
 from abc import ABC, abstractmethod
 from team import Team
 class Piece(ABC):
@@ -15,7 +16,8 @@ class Piece(ABC):
     BOUND_PALACE_X_RED = tuple((7, 9))
     BOUND_PALACE_X_BLACK = tuple((0, 2))
     BOUND_PALACE_Y = tuple((3, 5))
-    # Initialization
+
+    # Khởi tạo
     def __init__(
         self,
         position: tuple,
@@ -37,7 +39,6 @@ class Piece(ABC):
         return str(self.team) + "_" + self._piece_type
 
     # Khởi tạo thuộc tính và các phương thức getter và setter
-
     @property
     def position(self) -> tuple:
         # Trả về vị trí của quân cờ
@@ -47,7 +48,7 @@ class Piece(ABC):
     def position(self, new_position: tuple) -> None:
         # Kiểm tra vị trí mới có nằm trên bàn cờ không
         if self.is_position_on_board(new_position) is False:
-            raise ValueError("The position is out of range")
+            raise ValueError("Vị trí nằm ngoài phạm vi")
 
         self._position = new_position
 
@@ -63,7 +64,7 @@ class Piece(ABC):
     def _get_piece_team_on_position(self, position: tuple) -> Team:
         # Trả về đội của quân cờ trên vị trí
         if self.is_position_on_board(position) is False:
-            raise ValueError("The position is out of range")
+            raise ValueError("Vị trí nằm ngoài phạm vi")
 
         notation = self.board[position[0]][position[1]]
         if notation == "NN":
@@ -206,7 +207,7 @@ class Advisor(Piece):
 
         # Nếu gói dữ liệu không tồn tại
         else:
-            raise ValueError("Value pack is not found")
+            raise ValueError("Không tìm thấy gói giá trị")
 
     def get_admissible_moves(self) -> list:
         # Tạo một danh sách các nước đi hợp lệ cho quân sĩ
@@ -265,7 +266,7 @@ class Cannon(Piece):
 
         # Nếu gói dữ liệu không tồn tại
         else:
-            raise ValueError("Value pack is not found")
+            raise ValueError("Không tìm thấy gói giá trị")
 
     def get_admissible_moves(self) -> list:
         # Tạo một danh sách các nước đi hợp lệ cho quân pháo
@@ -351,7 +352,7 @@ class Rook(Piece):
 
         # Nếu gói dữ liệu không tồn tại
         else:
-            raise ValueError("Value pack is not found")
+            raise ValueError("Không tìm thấy gói giá trị")
 
     def get_admissible_moves(self) -> list:
         # Tạo một danh sách các nước đi hợp lệ cho quân xe
@@ -441,7 +442,7 @@ class Elephant(Piece):
             return self._piece_value + change
         # Nếu gói dữ liệu không tồn tại
         else:
-            raise ValueError("Value pack is not found")
+            raise ValueError("Không tìm thấy gói giá trị")
 
     def get_admissible_moves(self) -> list:
         # Tạo một danh sách các nước đi hợp lệ cho quân tượng
@@ -546,7 +547,7 @@ class Pawn(Piece):
 
         # Nếu gói dữ liệu không tồn tại
         else:
-            raise ValueError("Value pack is not found")
+            raise ValueError("Không tìm thấy gói giá trị")
 
     # Searching admissible moves for the pawn
     def get_admissible_moves(self) -> list:
@@ -625,7 +626,7 @@ class Horse(Piece):
 
         # Nếu gói dữ liệu không tồn tại
         else:
-            raise ValueError("Value pack is not found")
+            raise ValueError("Không tìm thấy gói giá trị")
 
     def get_admissible_moves(self) -> list:
         # Tạo một danh sách các nước đi hợp lệ cho quân mã
@@ -694,7 +695,7 @@ class General(Piece):
 
         # Nếu gói dữ liệu không tồn tại
         else:
-            raise ValueError("Value pack is not found")
+            raise ValueError("Không tìm thấy gói giá trị")
 
     def get_admissible_moves(self) -> list:
         # Tạo một danh sách các nước đi hợp lệ cho quân tướng

@@ -24,4 +24,4 @@ class Team(Enum):
         elif team is Team.BLACK:
             return Team.RED
         else:
-            raise ValueError("Invalid input team")
+            raise ValueError("Team không hợp lệ")

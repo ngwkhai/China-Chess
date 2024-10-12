@@ -2,6 +2,7 @@ import pygame
 
 class Button():
     def __init__(self, image,pos, text_input, font, base_color, hovering_color):
+        """Lớp này đại diện cho Nút trong Pygame"""
         self.image = image
         self.x_pos = pos[0]
         self.y_pos = pos[1]
@@ -36,6 +37,7 @@ class Button():
                 self.text_input, True, self.base_color)
 
 class DropDown():
+    """Lớp này đại diện cho danh sách thả xuống trong Pygame"""
     def __init__(self, color_menu, color_option, x, y, w, h, font, main, options):
         self.color_menu = color_menu
         self.color_option = color_option
@@ -88,7 +90,7 @@ class DropDown():
 
                
 class InputBox:
-  
+    """Lớp này đại diện cho hộp Nhập liệu trong Pygame"""
     def __init__(self, x, y, w, h, font, color_inactive, color_active, text=''):
         self.x = x
         self.y = y
