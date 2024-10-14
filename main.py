@@ -857,88 +857,6 @@ def pve_menu():
 
         clock.tick(REFRESH_RATE)
 
-def pvp_menu():
-    # Tạo một số tiện ích
-
-    num_box = InputBox(330, 125, 40, 40, resource.get_font(30, 0),
-                       "Black", "Red", "Số trận")
-
-    start_button = Button(image=pygame.image.load("resources/button/normal_rect.png"), pos=(330.5, 450),
-                          text_input="Bắt đầu", font=resource.get_font(40, 0), base_color="#AB001B", hovering_color="Black")
-    quit_button = Button(image=pygame.image.load("resources/button/small_rect.png"), pos=(165, 550),
-                         text_input="Thoát", font=resource.get_font(30, 0), base_color="Black", hovering_color="#AB001B")
-    back_button = Button(image=pygame.image.load("resources/button/small_rect.png"), pos=(495, 550),
-                         text_input="Trở lại", font=resource.get_font(30, 0), base_color="Black", hovering_color="#AB001B")
-
-    # Bắt đầu vòng lặp trò chơi
-    while True:
-        # Nhận trạng thái trò chơi hiện tại
-        mouse_pos = pygame.mouse.get_pos()
-        events_list = pygame.event.get()
-
-        # Vẽ menu chính
-        # Vẽ nền
-        bg_img, bg_pos = resource.background()
-        SCREEN.blit(bg_img, bg_pos)
-
-        menu_text = resource.get_font(70, 0).render("Nhập cuộc", True, "Black")
-        menu_rect = menu_text.get_rect(center=(330.5, 60))
-        SCREEN.blit(menu_text, menu_rect)
-
-        # Vẽ chữ
-        text = resource.get_font(60, 0).render("Black", True, "Black")
-        rect = text.get_rect(center=(165, 185))
-        SCREEN.blit(text, rect)
-
-        text = resource.get_font(30, 0).render("Player 1", True, "Black")
-        rect = text.get_rect(center=(165, 225))
-        SCREEN.blit(text, rect)
-
-        text = resource.get_font(60, 0).render("Red", True, "#AB001B")
-        rect = text.get_rect(center=(495, 185))
-        SCREEN.blit(text, rect)
-
-        text = resource.get_font(30, 0).render("Player 2", True, "#AB001B")
-        rect = text.get_rect(center=(495, 225))
-        SCREEN.blit(text, rect)
-
-        # Vẽ nút
-        for button in [start_button, quit_button, back_button]:
-            button.draw(SCREEN)
-
-        # Vẽ hộp nhập
-        num_box.update()
-        num_box.draw(SCREEN)
-
-        # Xử lý sự kiện
-        for event in events_list:
-            # Thoát nếu bấm exit
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
-
-            # Xử lý khi bấm vào nút
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                # Nếu tất cả thông tin được điền đầy đủ
-                # Trò chơi sẽ bắt đầu
-                if start_button.check_for_input(mouse_pos):
-                    if not num_box.text.isnumeric():
-                        continue
-                    pvp_screen()
-
-                if quit_button.check_for_input(mouse_pos):
-                    pygame.quit()
-                    sys.exit()
-                if back_button.check_for_input(mouse_pos):
-                    main_menu()
-
-            num_box.handle_event(event)
-
-        # Cập nhật màn hình
-        pygame.display.flip()
-        # Thời gian khung hình
-        clock.tick(REFRESH_RATE)
-
 
 def pvp_screen() -> None:
     """Hàm này là màn hình chơi giữa người với người"""
@@ -1057,6 +975,79 @@ def pvp_screen() -> None:
 
         # Đợi đến frame tiếp theo
         clock.tick(REFRESH_RATE)
+
+def pvp_menu():
+    # Tạo một số tiện ích
+
+    start_button = Button(image=pygame.image.load("resources/button/normal_rect.png"), pos=(330.5, 450),
+                          text_input="Bắt đầu", font=resource.get_font(40, 0), base_color="#AB001B", hovering_color="Black")
+    quit_button = Button(image=pygame.image.load("resources/button/small_rect.png"), pos=(165, 550),
+                         text_input="Thoát", font=resource.get_font(30, 0), base_color="Black", hovering_color="#AB001B")
+    back_button = Button(image=pygame.image.load("resources/button/small_rect.png"), pos=(495, 550),
+                         text_input="Trở lại", font=resource.get_font(30, 0), base_color="Black", hovering_color="#AB001B")
+
+    # Bắt đầu vòng lặp trò chơi
+    while True:
+        # Nhận trạng thái trò chơi hiện tại
+        mouse_pos = pygame.mouse.get_pos()
+        events_list = pygame.event.get()
+
+        # Vẽ menu chính
+        # Vẽ nền
+        bg_img, bg_pos = resource.background()
+        SCREEN.blit(bg_img, bg_pos)
+
+        menu_text = resource.get_font(70, 0).render("Nhập cuộc", True, "Black")
+        menu_rect = menu_text.get_rect(center=(330.5, 60))
+        SCREEN.blit(menu_text, menu_rect)
+
+        # Vẽ chữ
+        text = resource.get_font(60, 0).render("Black", True, "Black")
+        rect = text.get_rect(center=(165, 185))
+        SCREEN.blit(text, rect)
+
+        text = resource.get_font(30, 0).render("Player 1", True, "Black")
+        rect = text.get_rect(center=(165, 225))
+        SCREEN.blit(text, rect)
+
+        text = resource.get_font(60, 0).render("Red", True, "#AB001B")
+        rect = text.get_rect(center=(495, 185))
+        SCREEN.blit(text, rect)
+
+        text = resource.get_font(30, 0).render("Player 2", True, "#AB001B")
+        rect = text.get_rect(center=(495, 225))
+        SCREEN.blit(text, rect)
+
+        # Vẽ nút
+        for button in [start_button, quit_button, back_button]:
+            button.draw(SCREEN)
+
+        # Xử lý sự kiện
+        for event in events_list:
+            # Thoát nếu bấm exit
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+
+            # Xử lý khi bấm vào nút
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                # Nếu tất cả thông tin được điền đầy đủ
+                # Trò chơi sẽ bắt đầu
+                if start_button.check_for_input(mouse_pos):
+                    pvp_screen()
+
+                if quit_button.check_for_input(mouse_pos):
+                    pygame.quit()
+                    sys.exit()
+                if back_button.check_for_input(mouse_pos):
+                    main_menu()
+
+
+        # Cập nhật màn hình
+        pygame.display.flip()
+        # Thời gian khung hình
+        clock.tick(REFRESH_RATE)
+
 
 def main_menu():
     """Hàm này là màn hình menu chính"""
